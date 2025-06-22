@@ -142,25 +142,38 @@ function App() {
   };
 
   const handleCheckboxChange = (id) => {
-    setListOfLists(prevData =>
-    prevData.map(list =>
-      list.id === activeListIndex
-        ? {
-            ...list,
-            checkboxArray: list.checkboxArray.map((item, idx) => 
-              idx === id ? {...item, checked: !item.checked} : item
-            )
-          }
-        : list
-    )
-  );
+    setListOfLists((prevData) =>
+      prevData.map((list) =>
+        list.id === activeListIndex
+          ? {
+              ...list,
+              checkboxArray: list.checkboxArray.map((item, idx) =>
+                idx === id ? { ...item, checked: !item.checked } : item
+              ),
+            }
+          : list
+      )
+    );
 
     // changePropertyInListOfLists(`checkboxArray[${id}].checked`, !listOfLists[activeListIndex].checkboxArray[id].checked);
   };
 
   const handleCheckboxTextChange = (id, newText) => {
-    setItems(
-      items.map((item) => (item.id === id ? { ...item, text: newText } : item))
+    // setItems(
+    //   items.map((item) => (item.id === id ? { ...item, text: newText } : item))
+    // );
+
+    setListOfLists((prevData) =>
+      prevData.map((list) =>
+        list.id === activeListIndex
+          ? {
+              ...list,
+              checkboxArray: list.checkboxArray.map((item, idx) =>
+                idx === id ? { ...item, text: newText } : item
+              ),
+            }
+          : list
+      )
     );
   };
 
