@@ -7,7 +7,7 @@ function App() {
     { id: 1, title: "second list", text: "second text", checkboxArray: [] },
   ]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [activeListIndex, setActiveListIndex] = useState(null);
+  const [activeListIndex, setActiveListIndex] = useState(0);
 
   const OpenEditorWindow = () => {
     console.log("Открываю окно редактора");
@@ -177,11 +177,30 @@ function App() {
     );
   };
 
+  const howMuchCheckboxes = listOfLists[activeListIndex].checkboxArray.length;
+  const howMuchCheckboxesIsDone = listOfLists[
+    activeListIndex
+  ].checkboxArray.filter((item) => item.checked === true).length;
+  const value =
+    howMuchCheckboxes > 0
+      ? Math.round((howMuchCheckboxesIsDone / howMuchCheckboxes) * 100)
+      : 0;
+ 
+  let modalStyle = {
+    // backgroundColor: `hsl(${(100 - value) * 1.2}, 100%, 50%)`
+    backgroundColor: `hsl(${value * 1.2}, 100%, 50%)`,
+  };
+
+  if (howMuchCheckboxes === 0) {
+    modalStyle = {};
+  }
+
+
   return (
     <>
       <div>
         {isEditorOpen && (
-          <div className="modal">
+          <div className="modal" style={modalStyle}>
             <div className="modal-content">
               <h2>Модальное окно</h2>
               {InitRedactorWindow()}
