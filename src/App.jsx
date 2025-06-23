@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import NoteList from "./components/NoteList/NoteList";
 
 function App() {
   const [listOfLists, setListOfLists] = useState([
@@ -185,7 +186,7 @@ function App() {
     howMuchCheckboxes > 0
       ? Math.round((howMuchCheckboxesIsDone / howMuchCheckboxes) * 100)
       : 0;
- 
+
   let modalStyle = {
     // backgroundColor: `hsl(${(100 - value) * 1.2}, 100%, 50%)`
     backgroundColor: `hsl(${value * 1.2}, 100%, 50%)`,
@@ -194,7 +195,6 @@ function App() {
   if (howMuchCheckboxes === 0) {
     modalStyle = {};
   }
-
 
   return (
     <>
@@ -209,6 +209,15 @@ function App() {
             </div>
           </div>
         )}
+
+        <NoteList
+          notes={listOfLists}
+          onNoteClick={(index) => {
+            setActiveListIndex(index);
+            setIsEditorOpen(true);
+          }}
+        ></NoteList>
+
         <ul>
           {listOfLists.map((item, index) => {
             return (
