@@ -9,11 +9,10 @@ export default function NoteEditor({
   onAddCheckbox,
   onCheckboxStatusChange,
   onCheckboxTextChange,
+  style
 }) {
   return (
-    <>
-      {/* // <div className="modal" style={modalStyle}> */}
-      <div className="modal">
+      <div className="modal" style={style}>
         <div className="modal-content">
           <h2>Модальное окно</h2>
           <h3>{note.title}</h3>
@@ -47,6 +46,5 @@ export default function NoteEditor({
           <button onClick={onClose}>Закрыть</button>
         </div>
       </div>
-    </>
   );
 }

@@ -191,19 +191,19 @@ function App() {
   //   modalStyle = {};
   // }
 
-  const completionPercentage = useMemo(() => {
-    if (!activeNote?.checkboxArray?.length) return 0;
+  // const completionPercentage = useMemo(() => {
+  //   if (!activeNote?.checkboxArray?.length) return 0;
 
-    const doneCount = activeNote.checkboxArray.filter(
-      (item) => item.checked
-    ).length;
-    return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
-  }, [activeNote]);
+  //   const doneCount = activeNote.checkboxArray.filter(
+  //     (item) => item.checked
+  //   ).length;
+  //   return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
+  // }, [activeNote]);
 
-  const modalStyle = useMemo(() => {
-    if (!activeNote?.checkboxArray?.length) return {};
-    return { backgroundColor: `hsl(${completionPercentage * 1.2}, 100%, 50%)` };
-  }, [activeNote, completionPercentage]);
+  // const modalStyle = useMemo(() => {
+  //   if (!activeNote?.checkboxArray?.length) return {};
+  //   return { backgroundColor: `hsl(${completionPercentage * 1.2}, 100%, 50%)` };
+  // }, [activeNote, completionPercentage]);
 
   // Сохраняем данные в localStorage при каждом изменении listOfLists
   useEffect(() => {
@@ -216,6 +216,39 @@ function App() {
   //   [listOfLists, activeNoteId]
   // );
 
+ // Рассчитываем процент выполнения
+  const completionPercentage = useMemo(() => {
+    if (!activeNote?.checkboxArray?.length) return 0;
+    
+    const doneCount = activeNote.checkboxArray.filter(item => item.checked).length;
+    return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
+  }, [activeNote]);
+
+  // Создаем цвет на основе процента выполнения
+  const getBackgroundStyle = useMemo(() => {
+    // HSL: Hue (0-120: 0=red, 120=green), Saturation 100%, Lightness 50%
+    const hue = (completionPercentage * 1.2); // 0-120
+    return {
+      backgroundColor: `hsl(${hue}, 100%, 50%)`,
+      background: `linear-gradient(135deg, hsl(${hue}, 100%, 50%), hsl(${hue}, 100%, 40%))`,
+    };
+  }, [completionPercentage]);
+
+  // Применяем стиль ко всему редактору и списку
+  const editorStyle = getBackgroundStyle;
+  const listItemStyle = (noteId) => {
+    const note = listOfLists.find(note => note.id === noteId);
+    if (!note?.checkboxArray?.length) return {};
+    
+    const doneCount = note.checkboxArray.filter(item => item.checked).length;
+    const percent = Math.round((doneCount / note.checkboxArray.length) * 100);
+    const hue = (percent * 1.2);
+    
+    return {
+      backgroundColor: `hsl(${hue}, 100%, 20%)`,
+      borderLeft: `4px solid hsl(${hue}, 100%, 50%)`,
+    };
+  };
 
   return (
     <>
@@ -229,11 +262,11 @@ function App() {
             onCheckboxTextChange={handleCheckboxTextChange}
             onTextChange={handleTextChange}
             onAddCheckbox={addCheckbox}
-            style={modalStyle}
+            style={editorStyle}
           ></NoteEditor>
         )}
 
-        <NoteList notes={listOfLists} onNoteClick={handleNoteClick}></NoteList>
+        <NoteList getItemStyle={listItemStyle} notes={listOfLists} onNoteClick={handleNoteClick}></NoteList>
 
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
       </div>
