@@ -39,8 +39,6 @@ export default function NoteEditor({
           {/* <p>{listOfLists[activeListIndex].text}</p> */}
           {/*  */}
           {note.checkboxArray.map((item) => {
-            console.log("item:");
-            console.dir(item);
             return (
               <CheckboxItem key={item.id} item={item} onStatusChange={onCheckboxStatusChange} onTextChange={onCheckboxTextChange} />
             );

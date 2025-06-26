@@ -9,12 +9,12 @@ export default function CheckboxItem({item, onTextChange, onStatusChange}) {
       <input 
         type="checkbox"
         checked={item.checked}
-        onChange={onStatusChange}
+        onChange={() => onStatusChange(item.id)}
       />
       <input
         type="text"
         value={item.text}
-        onChange={(e) => {onTextChange(e)}}
+        onChange={(e) => {onTextChange(item.id, e.target.value)}}
       />
     </div>
   );

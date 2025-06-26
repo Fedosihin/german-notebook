@@ -110,7 +110,7 @@ function App() {
               <input
                 type="checkbox"
                 checked={item.checked}
-                onChange={() => handleCheckboxChange(item.id)}
+                onChange={() => handleCheckboxStatusChange(item.id)}
                 style={{ marginRight: "10px" }}
               />
               <input
@@ -153,7 +153,7 @@ function App() {
     addNewListInListOfList(newList);
   };
 
-  const handleCheckboxChange = (id) => {
+  const handleCheckboxStatusChange = (id) => {
     setListOfLists((prevData) =>
       prevData.map((list) =>
         list.id === activeListIndex
@@ -227,6 +227,8 @@ function App() {
           // onTitleChange={(e) => {
           //   handleTitleChange(e);
           // }}
+          onCheckboxStatusChange={handleCheckboxStatusChange}
+          onCheckboxTextChange={handleCheckboxTextChange}
           onTextChange={handleTextChange}
           // onTextChange={(e) => {
           //   handleTextChange(e);
