@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import NoteList from "./components/NoteList/NoteList";
+import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
 
 function App() {
   const [listOfLists, setListOfLists] = useState([
@@ -234,6 +235,7 @@ function App() {
           })}
         </ul>
         <button onClick={() => CreateEmptyNote()}>Добавить запись</button>
+        <AddNoteButton onButtonClick={CreateEmptyNote} ></AddNoteButton>
       </div>
     </>
   );
