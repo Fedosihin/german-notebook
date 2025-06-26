@@ -210,29 +210,12 @@ function App() {
   return (
     <>
       <div>
-        {/* {isEditorOpen && (
-          <div className="modal" style={modalStyle}>
-            <div className="modal-content">
-              <h2>Модальное окно</h2>
-              {InitRedactorWindow()}
-              <button onClick={() => addCheckbox()}>Добавить чекбокс</button>
-              <button onClick={() => CloseEditorWindow()}>Закрыть</button>
-            </div>
-          </div>
-        )} */}
-
         {isEditorOpen && <NoteEditor note={listOfLists[activeListIndex]}
           onClose={CloseEditorWindow}
           onTitleChange={handleTitleChange}
-          // onTitleChange={(e) => {
-          //   handleTitleChange(e);
-          // }}
           onCheckboxStatusChange={handleCheckboxStatusChange}
           onCheckboxTextChange={handleCheckboxTextChange}
           onTextChange={handleTextChange}
-          // onTextChange={(e) => {
-          //   handleTextChange(e);
-          // }}
           onAddCheckbox={addCheckbox}
         ></NoteEditor>}
 
@@ -244,22 +227,6 @@ function App() {
           }}
         ></NoteList>
 
-        {/* <ul>
-          {listOfLists.map((item, index) => {
-            return (
-              <li
-                key={index}
-                onClick={() => {
-                  handleListClick(item, index);
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                {item.title}
-              </li>
-            );
-          })}
-        </ul> */}
-        {/* <button onClick={() => CreateEmptyNote()}>Добавить запись</button> */}
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
       </div>
     </>
