@@ -4,13 +4,12 @@ import NoteListItem from "./NoteListItem";
 export default function NoteList({ notes, onNoteClick }) {
   return (
     <ul>
-      {notes.map((note, index) => {
+      {notes.map((note) => {
         return (
           <NoteListItem
             key={note.id}
             note={note}
-            //   onClick={() => onNoteClick(note.id)}> ???
-            onClick={() => onNoteClick(index)}
+            onClick={() => onNoteClick(note.id)}
           ></NoteListItem>
         );
       })}

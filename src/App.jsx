@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./App.css";
 import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
@@ -6,138 +6,93 @@ import NoteEditor from "./components/NoteEditor/NoteEditor";
 
 function App() {
   const [listOfLists, setListOfLists] = useState([
-    { id: 0, title: "first list", text: "first text", checkboxArray: [{
+    {
       id: 0,
-      checked: true,
-      text: "Первый список - пункт",
-    }] },
-    { id: 1, title: "second list", text: "second text", checkboxArray: [{
-      id: 0,
-      checked: true,
-      text: "Второй список - пункт",
-    }] },
+      title: "first list",
+      text: "first text",
+      checkboxArray: [
+        {
+          id: 0,
+          checked: true,
+          text: "Первый список - пункт",
+        },
+      ],
+    },
+    {
+      id: 1,
+      title: "second list",
+      text: "second text",
+      checkboxArray: [
+        {
+          id: 0,
+          checked: true,
+          text: "Второй список - пункт",
+        },
+      ],
+    },
   ]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [activeListIndex, setActiveListIndex] = useState(0);
+  const [activeNoteId, setActiveNoteId] = useState(0);
 
-  const OpenEditorWindow = () => {
-    console.log("Открываю окно редактора");
-    setIsEditorOpen(true);
-  };
+  const activeNote = useMemo(
+    () =>
+      listOfLists.find((note) => note.id === activeNoteId) || listOfLists[0],
+    [listOfLists, activeNoteId]
+  );
+
   useEffect(() => {
     console.dir(listOfLists);
   }, [listOfLists]);
-  const CloseEditorWindow = () => {
+
+  const openEditor = () => {
+    console.log("Открываю окно редактора");
+    setIsEditorOpen(true);
+  };
+
+  const closeEditor = () => {
     console.log("Закрываю окно редактора");
     setIsEditorOpen(false);
   };
 
-  const handleListClick = (item, index) => {
+  const handleNoteClick = (id) => {
     console.log("Был нажат элемент списка:");
-    console.dir(item);
-    console.log("С индексом:");
-    console.log(index);
-    setActiveListIndex(index);
-    OpenEditorWindow();
+    setActiveNoteId(id);
+    openEditor();
   };
 
   const CreateEmptyNote = () => {
     console.log("Добавил пустой элемент в список");
-    setListOfLists([
-      ...listOfLists,
-      {
-        // id: listOfLists.length,
-        id: Date.now(),
-        title: "Пустой заголовок",
-        text: "Пустой текст",
-        checkboxArray: [],
-      },
-    ]);
+    const newNote = {
+      id: Date.now(),
+      title: "Пустой заголовок",
+      text: "Пустой текст",
+      checkboxArray: [],
+    };
+    setListOfLists((prev) => [...prev, newNote]);
+    setActiveNoteId(newNote.id);
+    openEditor();
+  };
+
+  const updateNoteProperty = (property, value) => {
+    setListOfLists((prev) =>
+      prev.map((note) =>
+        note.id === activeNoteId ? { ...note, [property]: value } : note
+      )
+    );
   };
 
   const handleTitleChange = (e) => {
-    const newText = e.target.value;
-    setListOfLists(
-      listOfLists.map((list, index) =>
-        index === activeListIndex ? { ...list, title: newText } : list
-      )
-    );
+    updateNoteProperty("title", e.target.value);
   };
 
   const handleTextChange = (e) => {
-    const newText = e.target.value;
-    setListOfLists(
-      listOfLists.map((list, index) =>
-        index === activeListIndex ? { ...list, text: newText } : list
-      )
-    );
-  };
-
-  const InitRedactorWindow = () => {
-    console.log("Иниц. окно редактора");
-    return (
-      <>
-        {/* <h3>Заголовок:</h3>*/}
-        <h3>{listOfLists[activeListIndex].title}</h3>
-        <input
-          type="text"
-          placeholder="Введите заголовок..."
-          onChange={(e) => {
-            handleTitleChange(e);
-          }}
-          value={listOfLists[activeListIndex].title}
-        />
-        {/* <p>Содержимое модального окна</p> */}
-        <textarea
-          value={listOfLists[activeListIndex].text}
-          onChange={(e) => handleTextChange(e)}
-          placeholder="Введите текст..."
-          rows={10}
-          style={{ width: "100%" }}
-        />
-        {/* <p>{listOfLists[activeListIndex].text}</p> */}
-        {/*  */}
-        {listOfLists[activeListIndex].checkboxArray.map((item) => {
-          return (
-            <div
-              key={item.id}
-              style={{
-                margin: "10px 0",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={item.checked}
-                onChange={() => handleCheckboxStatusChange(item.id)}
-                style={{ marginRight: "10px" }}
-              />
-              <input
-                type="text"
-                value={item.text}
-                onChange={(e) =>
-                  handleCheckboxTextChange(item.id, e.target.value)
-                }
-                style={{ padding: "5px", flexGrow: 1 }}
-              />
-            </div>
-          );
-        })}
-      </>
-    );
-  };
-
-  const addNewListInListOfList = (newList) => {
-    setListOfLists(
-      listOfLists.map((list) => (list.id === activeListIndex ? newList : list))
-    );
+    updateNoteProperty("text", e.target.value);
   };
 
   const changePropertyInListOfLists = (property, newValue) => {
     setListOfLists(
       listOfLists.map((list) =>
-        list.id === activeListIndex ? { ...list, [property]: newValue } : list
+        list.id === activeNoteId ? { ...list, [property]: newValue } : list
       )
     );
   };
@@ -148,22 +103,29 @@ function App() {
       checked: false,
       text: "Новый пункт",
     };
-    let newList = listOfLists[activeListIndex];
-    newList.checkboxArray.push(newCheckbox);
-    addNewListInListOfList(newList);
+    setListOfLists((prev) =>
+      prev.map((note) =>
+        note.id === activeNoteId
+          ? {
+              ...note,
+              checkboxArray: [...note.checkboxArray, newCheckbox],
+            }
+          : note
+      )
+    );
   };
 
   const handleCheckboxStatusChange = (id) => {
-    setListOfLists((prevData) =>
-      prevData.map((list, index) =>
-        index === activeListIndex
+    setListOfLists(prev =>
+      prev.map(note =>
+        note.id === activeNoteId
           ? {
-              ...list,
-              checkboxArray: list.checkboxArray.map((item, idx) =>
+              ...note,
+              checkboxArray: note.checkboxArray.map(item =>
                 item.id === id ? { ...item, checked: !item.checked } : item
-              ),
+              )
             }
-          : list
+          : note
       )
     );
 
@@ -171,61 +133,67 @@ function App() {
   };
 
   const handleCheckboxTextChange = (id, newText) => {
-    // setItems(
-    //   items.map((item) => (item.id === id ? { ...item, text: newText } : item))
-    // );
-
-    setListOfLists((prevData) =>
-      prevData.map((list, index) =>
-        index === activeListIndex
+    setListOfLists(prev =>
+      prev.map(note =>
+        note.id === activeNoteId
           ? {
-              ...list,
-              checkboxArray: list.checkboxArray.map((item, idx) =>
+              ...note,
+              checkboxArray: note.checkboxArray.map(item =>
                 item.id === id ? { ...item, text: newText } : item
-              ),
+              )
             }
-          : list
+          : note
       )
     );
   };
 
-  const howMuchCheckboxes = listOfLists[activeListIndex].checkboxArray.length;
-  const howMuchCheckboxesIsDone = listOfLists[
-    activeListIndex
-  ].checkboxArray.filter((item) => item.checked === true).length;
-  const value =
-    howMuchCheckboxes > 0
-      ? Math.round((howMuchCheckboxesIsDone / howMuchCheckboxes) * 100)
-      : 0;
+  // const howMuchCheckboxes = listOfLists[activeNoteId].checkboxArray.length;
+  // const howMuchCheckboxesIsDone = listOfLists[
+  //   activeNoteId
+  // ].checkboxArray.filter((item) => item.checked === true).length;
+  // const value =
+  //   howMuchCheckboxes > 0
+  //     ? Math.round((howMuchCheckboxesIsDone / howMuchCheckboxes) * 100)
+  //     : 0;
 
-  let modalStyle = {
-    // backgroundColor: `hsl(${(100 - value) * 1.2}, 100%, 50%)`
-    backgroundColor: `hsl(${value * 1.2}, 100%, 50%)`,
-  };
+  // let modalStyle = {
+  //   // backgroundColor: `hsl(${(100 - value) * 1.2}, 100%, 50%)`
+  //   backgroundColor: `hsl(${value * 1.2}, 100%, 50%)`,
+  // };
 
-  if (howMuchCheckboxes === 0) {
-    modalStyle = {};
-  }
+  // if (howMuchCheckboxes === 0) {
+  //   modalStyle = {};
+  // }
+
+  const completionPercentage = useMemo(() => {
+    if (!activeNote?.checkboxArray?.length) return 0;
+    
+    const doneCount = activeNote.checkboxArray.filter(item => item.checked).length;
+    return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
+  }, [activeNote]);
+
+  const modalStyle = useMemo(() => {
+    if (!activeNote?.checkboxArray?.length) return {};
+    return { backgroundColor: `hsl(${completionPercentage * 1.2}, 100%, 50%)` };
+  }, [activeNote, completionPercentage]);
 
   return (
     <>
       <div>
-        {isEditorOpen && <NoteEditor note={listOfLists[activeListIndex]}
-          onClose={CloseEditorWindow}
-          onTitleChange={handleTitleChange}
-          onCheckboxStatusChange={handleCheckboxStatusChange}
-          onCheckboxTextChange={handleCheckboxTextChange}
-          onTextChange={handleTextChange}
-          onAddCheckbox={addCheckbox}
-        ></NoteEditor>}
+        {isEditorOpen && (
+          <NoteEditor
+            note={activeNote}
+            onClose={closeEditor}
+            onTitleChange={handleTitleChange}
+            onCheckboxStatusChange={handleCheckboxStatusChange}
+            onCheckboxTextChange={handleCheckboxTextChange}
+            onTextChange={handleTextChange}
+            onAddCheckbox={addCheckbox}
+            style={modalStyle}
+          ></NoteEditor>
+        )}
 
-        <NoteList
-          notes={listOfLists}
-          onNoteClick={(index) => {
-            setActiveListIndex(index);
-            setIsEditorOpen(true);
-          }}
-        ></NoteList>
+        <NoteList notes={listOfLists} onNoteClick={handleNoteClick}></NoteList>
 
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
       </div>
