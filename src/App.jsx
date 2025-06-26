@@ -2,11 +2,20 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
+import NoteEditor from "./components/NoteEditor/NoteEditor";
 
 function App() {
   const [listOfLists, setListOfLists] = useState([
-    { id: 0, title: "first list", text: "first text", checkboxArray: [] },
-    { id: 1, title: "second list", text: "second text", checkboxArray: [] },
+    { id: 0, title: "first list", text: "first text", checkboxArray: [{
+      id: 0,
+      checked: true,
+      text: "Первый список - пункт",
+    }] },
+    { id: 1, title: "second list", text: "second text", checkboxArray: [{
+      id: 0,
+      checked: true,
+      text: "Второй список - пункт",
+    }] },
   ]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeListIndex, setActiveListIndex] = useState(0);
@@ -38,6 +47,7 @@ function App() {
       ...listOfLists,
       {
         id: listOfLists.length,
+        // id: Date.now(), ИЗМЕНИТЬ
         title: "Пустой заголовок",
         text: "Пустой текст",
         checkboxArray: [],
@@ -200,7 +210,7 @@ function App() {
   return (
     <>
       <div>
-        {isEditorOpen && (
+        {/* {isEditorOpen && (
           <div className="modal" style={modalStyle}>
             <div className="modal-content">
               <h2>Модальное окно</h2>
@@ -209,7 +219,20 @@ function App() {
               <button onClick={() => CloseEditorWindow()}>Закрыть</button>
             </div>
           </div>
-        )}
+        )} */}
+
+        {isEditorOpen && <NoteEditor note={listOfLists[activeListIndex]}
+          onClose={CloseEditorWindow}
+          onTitleChange={handleTitleChange}
+          // onTitleChange={(e) => {
+          //   handleTitleChange(e);
+          // }}
+          onTextChange={handleTextChange}
+          // onTextChange={(e) => {
+          //   handleTextChange(e);
+          // }}
+          onAddCheckbox={addCheckbox}
+        ></NoteEditor>}
 
         <NoteList
           notes={listOfLists}
@@ -219,7 +242,7 @@ function App() {
           }}
         ></NoteList>
 
-        <ul>
+        {/* <ul>
           {listOfLists.map((item, index) => {
             return (
               <li
@@ -233,9 +256,9 @@ function App() {
               </li>
             );
           })}
-        </ul>
-        <button onClick={() => CreateEmptyNote()}>Добавить запись</button>
-        <AddNoteButton onButtonClick={CreateEmptyNote} ></AddNoteButton>
+        </ul> */}
+        {/* <button onClick={() => CreateEmptyNote()}>Добавить запись</button> */}
+        <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
       </div>
     </>
   );
