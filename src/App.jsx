@@ -4,36 +4,72 @@ import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
 import NoteEditor from "./components/NoteEditor/NoteEditor";
 
+// Ключ для localStorage
+const LOCAL_STORAGE_KEY = "notesAppData";
+
 function App() {
-  const [listOfLists, setListOfLists] = useState([
-    {
-      id: 0,
-      title: "first list",
-      text: "first text",
-      checkboxArray: [
-        {
-          id: 0,
-          checked: true,
-          text: "Первый список - пункт",
-        },
-      ],
-    },
-    {
-      id: 1,
-      title: "second list",
-      text: "second text",
-      checkboxArray: [
-        {
-          id: 0,
-          checked: true,
-          text: "Второй список - пункт",
-        },
-      ],
-    },
-  ]);
+// Загружаем данные из localStorage при инициализации
+  const [listOfLists, setListOfLists] = useState(() => {
+    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return savedData 
+      ? JSON.parse(savedData) 
+      : [
+          {
+            id: 0,
+            title: "first list",
+            text: "first text",
+            checkboxArray: [
+              {
+                id: 0,
+                checked: true,
+                text: "Первый список - пункт",
+              },
+            ],
+          },
+          {
+            id: 1,
+            title: "second list",
+            text: "second text",
+            checkboxArray: [
+              {
+                id: 0,
+                checked: true,
+                text: "Второй список - пункт",
+              },
+            ],
+          },
+        ];
+  });
+
+  // const [listOfLists, setListOfLists] = useState([
+  //   {
+  //     id: 0,
+  //     title: "first list",
+  //     text: "first text",
+  //     checkboxArray: [
+  //       {
+  //         id: 0,
+  //         checked: true,
+  //         text: "Первый список - пункт",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: 1,
+  //     title: "second list",
+  //     text: "second text",
+  //     checkboxArray: [
+  //       {
+  //         id: 0,
+  //         checked: true,
+  //         text: "Второй список - пункт",
+  //       },
+  //     ],
+  //   },
+  // ]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeNoteId, setActiveNoteId] = useState(0);
-
+  
   const activeNote = useMemo(
     () =>
       listOfLists.find((note) => note.id === activeNoteId) || listOfLists[0],
@@ -89,14 +125,6 @@ function App() {
     updateNoteProperty("text", e.target.value);
   };
 
-  const changePropertyInListOfLists = (property, newValue) => {
-    setListOfLists(
-      listOfLists.map((list) =>
-        list.id === activeNoteId ? { ...list, [property]: newValue } : list
-      )
-    );
-  };
-
   const addCheckbox = () => {
     const newCheckbox = {
       id: Date.now(),
@@ -116,31 +144,29 @@ function App() {
   };
 
   const handleCheckboxStatusChange = (id) => {
-    setListOfLists(prev =>
-      prev.map(note =>
+    setListOfLists((prev) =>
+      prev.map((note) =>
         note.id === activeNoteId
           ? {
               ...note,
-              checkboxArray: note.checkboxArray.map(item =>
+              checkboxArray: note.checkboxArray.map((item) =>
                 item.id === id ? { ...item, checked: !item.checked } : item
-              )
+              ),
             }
           : note
       )
     );
-
-    // changePropertyInListOfLists(`checkboxArray[${id}].checked`, !listOfLists[activeListIndex].checkboxArray[id].checked);
   };
 
   const handleCheckboxTextChange = (id, newText) => {
-    setListOfLists(prev =>
-      prev.map(note =>
+    setListOfLists((prev) =>
+      prev.map((note) =>
         note.id === activeNoteId
           ? {
               ...note,
-              checkboxArray: note.checkboxArray.map(item =>
+              checkboxArray: note.checkboxArray.map((item) =>
                 item.id === id ? { ...item, text: newText } : item
-              )
+              ),
             }
           : note
       )
@@ -167,8 +193,10 @@ function App() {
 
   const completionPercentage = useMemo(() => {
     if (!activeNote?.checkboxArray?.length) return 0;
-    
-    const doneCount = activeNote.checkboxArray.filter(item => item.checked).length;
+
+    const doneCount = activeNote.checkboxArray.filter(
+      (item) => item.checked
+    ).length;
     return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
   }, [activeNote]);
 
@@ -176,6 +204,18 @@ function App() {
     if (!activeNote?.checkboxArray?.length) return {};
     return { backgroundColor: `hsl(${completionPercentage * 1.2}, 100%, 50%)` };
   }, [activeNote, completionPercentage]);
+
+  // Сохраняем данные в localStorage при каждом изменении listOfLists
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listOfLists));
+  }, [listOfLists]);
+
+  // const activeNote = useMemo(
+  //   () =>
+  //     listOfLists.find((note) => note.id === activeNoteId) || listOfLists[0],
+  //   [listOfLists, activeNoteId]
+  // );
+
 
   return (
     <>
