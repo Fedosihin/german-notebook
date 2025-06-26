@@ -46,8 +46,8 @@ function App() {
     setListOfLists([
       ...listOfLists,
       {
-        id: listOfLists.length,
-        // id: Date.now(), ИЗМЕНИТЬ
+        // id: listOfLists.length,
+        id: Date.now(),
         title: "Пустой заголовок",
         text: "Пустой текст",
         checkboxArray: [],
@@ -58,8 +58,8 @@ function App() {
   const handleTitleChange = (e) => {
     const newText = e.target.value;
     setListOfLists(
-      listOfLists.map((list) =>
-        list.id === activeListIndex ? { ...list, title: newText } : list
+      listOfLists.map((list, index) =>
+        index === activeListIndex ? { ...list, title: newText } : list
       )
     );
   };
@@ -67,8 +67,8 @@ function App() {
   const handleTextChange = (e) => {
     const newText = e.target.value;
     setListOfLists(
-      listOfLists.map((list) =>
-        list.id === activeListIndex ? { ...list, text: newText } : list
+      listOfLists.map((list, index) =>
+        index === activeListIndex ? { ...list, text: newText } : list
       )
     );
   };
@@ -144,7 +144,7 @@ function App() {
 
   const addCheckbox = () => {
     const newCheckbox = {
-      id: listOfLists[activeListIndex].checkboxArray.length,
+      id: Date.now(),
       checked: false,
       text: "Новый пункт",
     };
@@ -155,12 +155,12 @@ function App() {
 
   const handleCheckboxStatusChange = (id) => {
     setListOfLists((prevData) =>
-      prevData.map((list) =>
-        list.id === activeListIndex
+      prevData.map((list, index) =>
+        index === activeListIndex
           ? {
               ...list,
               checkboxArray: list.checkboxArray.map((item, idx) =>
-                idx === id ? { ...item, checked: !item.checked } : item
+                item.id === id ? { ...item, checked: !item.checked } : item
               ),
             }
           : list
@@ -176,12 +176,12 @@ function App() {
     // );
 
     setListOfLists((prevData) =>
-      prevData.map((list) =>
-        list.id === activeListIndex
+      prevData.map((list, index) =>
+        index === activeListIndex
           ? {
               ...list,
               checkboxArray: list.checkboxArray.map((item, idx) =>
-                idx === id ? { ...item, text: newText } : item
+                item.id === id ? { ...item, text: newText } : item
               ),
             }
           : list
