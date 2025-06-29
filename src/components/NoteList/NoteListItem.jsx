@@ -1,4 +1,5 @@
 import React from "react";
+import EmojiButton from "../EmojiButton/EmojiButton";
 
 export default function NoteListItem ({note, onClick, style }) {
   return (
@@ -7,6 +8,7 @@ export default function NoteListItem ({note, onClick, style }) {
       // style={{ cursor: "pointer" }}
       style={style}
     >
+      <EmojiButton></EmojiButton>
       {note.title}
     </li>
   );
