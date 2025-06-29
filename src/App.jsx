@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useReducer } from "react";
 import "./App.css";
 import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
@@ -7,114 +7,196 @@ import NoteEditor from "./components/NoteEditor/NoteEditor";
 // Ключ для localStorage
 const LOCAL_STORAGE_KEY = "notesAppData";
 
-function App() {
-// Загружаем данные из localStorage при инициализации
-  const [listOfLists, setListOfLists] = useState(() => {
-    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedData 
-      ? JSON.parse(savedData) 
-      : [
-          {
-            id: 0,
-            title: "first list",
-            text: "first text",
-            checkboxArray: [
-              {
-                id: 0,
-                checked: true,
-                text: "Первый список - пункт",
-              },
-            ],
-          },
-          {
-            id: 1,
-            title: "second list",
-            text: "second text",
-            checkboxArray: [
-              {
-                id: 0,
-                checked: true,
-                text: "Второй список - пункт",
-              },
-            ],
-          },
-        ];
-  });
+const getInitialState = () => {
+  const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+  return savedData
+    ? JSON.parse(savedData)
+    : [
+        {
+          id: 0,
+          title: "first list",
+          text: "first text",
+          checkboxArray: [
+            {
+              id: 0,
+              checked: true,
+              text: "Первый список - пункт",
+            },
+          ],
+        },
+        {
+          id: 1,
+          title: "second list",
+          text: "second text",
+          checkboxArray: [
+            {
+              id: 0,
+              checked: true,
+              text: "Второй список - пункт",
+            },
+          ],
+        },
+      ];
+};
 
-  // const [listOfLists, setListOfLists] = useState([
-  //   {
-  //     id: 0,
-  //     title: "first list",
-  //     text: "first text",
-  //     checkboxArray: [
-  //       {
-  //         id: 0,
-  //         checked: true,
-  //         text: "Первый список - пункт",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 1,
-  //     title: "second list",
-  //     text: "second text",
-  //     checkboxArray: [
-  //       {
-  //         id: 0,
-  //         checked: true,
-  //         text: "Второй список - пункт",
-  //       },
-  //     ],
-  //   },
-  // ]);
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [activeNoteId, setActiveNoteId] = useState(0);
+const initialState = {
+  listOfLists: getInitialState(),
+  isEditorOpen: false,
+  activeNoteId: 0,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "LOAD_STATE":
+      return {
+        ...state,
+        listOfLists: action.payload || initialState.listOfLists,
+      };
+    case "OPEN_EDITOR":
+      return {
+        ...state,
+        isEditorOpen: true,
+      };
+    case "CLOSE_EDITOR":
+      return {
+        ...state,
+        isEditorOpen: false,
+      };
+    case "SET_ACTIVE_NOTE":
+      return {
+        ...state,
+        activeNoteId: action.payload,
+      };
+    case "CREATE_NOTE": {
+      const newNote = {
+        id: Date.now(),
+        title: "Пустой заголовок",
+        text: "Пустой текст",
+        checkboxArray: [],
+      };
+      return {
+        ...state,
+        listOfLists: [...state.listOfLists, newNote],
+        activeNoteId: newNote.id,
+      };
+    }
+    case "UPDATE_NOTE_PROPERTY":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? { ...note, [action.payload.property]: action.payload.value }
+            : note
+        ),
+      };
+    case "ADD_CHECKBOX": {
+      const newCheckbox = {
+        id: Date.now(),
+        checked: false,
+        text: "Новый пункт",
+      };
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                checkboxArray: [...note.checkboxArray, newCheckbox],
+              }
+            : note
+        ),
+      };
+    }
+    case "TOGGLE_CHECKBOX":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                checkboxArray: note.checkboxArray.map((item) =>
+                  item.id === action.payload
+                    ? { ...item, checked: !item.checked }
+                    : item
+                ),
+              }
+            : note
+        ),
+      };
+    case "UPDATE_CHECKBOX_TEXT":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                checkboxArray: note.checkboxArray.map((item) =>
+                  item.id === action.payload.id
+                    ? { ...item, text: action.payload.text }
+                    : item
+                ),
+              }
+            : note
+        ),
+      };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // Загружаем данные из localStorage при инициализации
+  useEffect(() => {
+    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+    dispatch({
+      type: "LOAD_STATE",
+      payload: savedData ? JSON.parse(savedData) : null,
+    });
+  }, []);
+
+  // Сохраняем данные в localStorage при каждом изменении listOfLists
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state.listOfLists));
+  }, [state.listOfLists]);
+
   
+
   const activeNote = useMemo(
     () =>
-      listOfLists.find((note) => note.id === activeNoteId) || listOfLists[0],
-    [listOfLists, activeNoteId]
+      state.listOfLists.find((note) => note.id === state.activeNoteId) ||
+      state.listOfLists[0],
+    [state.listOfLists, state.activeNoteId]
   );
-
-  useEffect(() => {
-    console.dir(listOfLists);
-  }, [listOfLists]);
 
   const openEditor = () => {
     console.log("Открываю окно редактора");
-    setIsEditorOpen(true);
+    dispatch({ type: "OPEN_EDITOR" });
   };
 
   const closeEditor = () => {
     console.log("Закрываю окно редактора");
-    setIsEditorOpen(false);
+    dispatch({ type: "CLOSE_EDITOR" });
   };
 
   const handleNoteClick = (id) => {
     console.log("Был нажат элемент списка:");
-    setActiveNoteId(id);
+    dispatch({ type: "SET_ACTIVE_NOTE", payload: id });
     openEditor();
   };
 
   const CreateEmptyNote = () => {
     console.log("Добавил пустой элемент в список");
-    const newNote = {
-      id: Date.now(),
-      title: "Пустой заголовок",
-      text: "Пустой текст",
-      checkboxArray: [],
-    };
-    setListOfLists((prev) => [...prev, newNote]);
-    setActiveNoteId(newNote.id);
+    dispatch({ type: "CREATE_NOTE" });
     openEditor();
   };
 
   const updateNoteProperty = (property, value) => {
-    setListOfLists((prev) =>
-      prev.map((note) =>
-        note.id === activeNoteId ? { ...note, [property]: value } : note
-      )
-    );
+    dispatch({
+      type: "UPDATE_NOTE_PROPERTY",
+      payload: { property, value },
+    });
   };
 
   const handleTitleChange = (e) => {
@@ -126,108 +208,34 @@ function App() {
   };
 
   const addCheckbox = () => {
-    const newCheckbox = {
-      id: Date.now(),
-      checked: false,
-      text: "Новый пункт",
-    };
-    setListOfLists((prev) =>
-      prev.map((note) =>
-        note.id === activeNoteId
-          ? {
-              ...note,
-              checkboxArray: [...note.checkboxArray, newCheckbox],
-            }
-          : note
-      )
-    );
+    dispatch({ type: "ADD_CHECKBOX" });
   };
 
   const handleCheckboxStatusChange = (id) => {
-    setListOfLists((prev) =>
-      prev.map((note) =>
-        note.id === activeNoteId
-          ? {
-              ...note,
-              checkboxArray: note.checkboxArray.map((item) =>
-                item.id === id ? { ...item, checked: !item.checked } : item
-              ),
-            }
-          : note
-      )
-    );
+    dispatch({ type: "TOGGLE_CHECKBOX", payload: id });
   };
 
   const handleCheckboxTextChange = (id, newText) => {
-    setListOfLists((prev) =>
-      prev.map((note) =>
-        note.id === activeNoteId
-          ? {
-              ...note,
-              checkboxArray: note.checkboxArray.map((item) =>
-                item.id === id ? { ...item, text: newText } : item
-              ),
-            }
-          : note
-      )
-    );
+    dispatch({
+      type: "UPDATE_CHECKBOX_TEXT",
+      payload: { id, text: newText },
+    });
   };
 
-  // const howMuchCheckboxes = listOfLists[activeNoteId].checkboxArray.length;
-  // const howMuchCheckboxesIsDone = listOfLists[
-  //   activeNoteId
-  // ].checkboxArray.filter((item) => item.checked === true).length;
-  // const value =
-  //   howMuchCheckboxes > 0
-  //     ? Math.round((howMuchCheckboxesIsDone / howMuchCheckboxes) * 100)
-  //     : 0;
-
-  // let modalStyle = {
-  //   // backgroundColor: `hsl(${(100 - value) * 1.2}, 100%, 50%)`
-  //   backgroundColor: `hsl(${value * 1.2}, 100%, 50%)`,
-  // };
-
-  // if (howMuchCheckboxes === 0) {
-  //   modalStyle = {};
-  // }
-
-  // const completionPercentage = useMemo(() => {
-  //   if (!activeNote?.checkboxArray?.length) return 0;
-
-  //   const doneCount = activeNote.checkboxArray.filter(
-  //     (item) => item.checked
-  //   ).length;
-  //   return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
-  // }, [activeNote]);
-
-  // const modalStyle = useMemo(() => {
-  //   if (!activeNote?.checkboxArray?.length) return {};
-  //   return { backgroundColor: `hsl(${completionPercentage * 1.2}, 100%, 50%)` };
-  // }, [activeNote, completionPercentage]);
-
-  // Сохраняем данные в localStorage при каждом изменении listOfLists
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listOfLists));
-  }, [listOfLists]);
-
-  // const activeNote = useMemo(
-  //   () =>
-  //     listOfLists.find((note) => note.id === activeNoteId) || listOfLists[0],
-  //   [listOfLists, activeNoteId]
-  // );
-
- // Рассчитываем процент выполнения
+  // Рассчитываем процент выполнения
   const completionPercentage = useMemo(() => {
     if (!activeNote?.checkboxArray?.length) return 0;
-    
-    const doneCount = activeNote.checkboxArray.filter(item => item.checked).length;
+
+    const doneCount = activeNote.checkboxArray.filter(
+      (item) => item.checked
+    ).length;
     return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
   }, [activeNote]);
 
   // Создаем цвет на основе процента выполнения
   const getBackgroundStyle = useMemo(() => {
     // HSL: Hue (0-120: 0=red, 120=green), Saturation 100%, Lightness 50%
-    const hue = (completionPercentage * 1.2); // 0-120
+    const hue = completionPercentage * 1.2; // 0-120
     return {
       backgroundColor: `hsl(${hue}, 100%, 50%)`,
       background: `linear-gradient(135deg, hsl(${hue}, 100%, 50%), hsl(${hue}, 100%, 40%))`,
@@ -237,23 +245,24 @@ function App() {
   // Применяем стиль ко всему редактору и списку
   const editorStyle = getBackgroundStyle;
   const listItemStyle = (noteId) => {
-    const note = listOfLists.find(note => note.id === noteId);
+    const note = state.listOfLists.find((note) => note.id === noteId);
     if (!note?.checkboxArray?.length) return {};
-    
-    const doneCount = note.checkboxArray.filter(item => item.checked).length;
+
+    const doneCount = note.checkboxArray.filter((item) => item.checked).length;
     const percent = Math.round((doneCount / note.checkboxArray.length) * 100);
-    const hue = (percent * 1.2);
-    
+    const hue = percent * 1.2;
+
     return {
       backgroundColor: `hsl(${hue}, 100%, 20%)`,
       borderLeft: `4px solid hsl(${hue}, 100%, 50%)`,
     };
   };
 
+
   return (
     <>
       <div>
-        {isEditorOpen && (
+        {state.isEditorOpen && (
           <NoteEditor
             note={activeNote}
             onClose={closeEditor}
@@ -266,7 +275,11 @@ function App() {
           ></NoteEditor>
         )}
 
-        <NoteList getItemStyle={listItemStyle} notes={listOfLists} onNoteClick={handleNoteClick}></NoteList>
+        <NoteList
+          getItemStyle={listItemStyle}
+          notes={state.listOfLists}
+          onNoteClick={handleNoteClick}
+        ></NoteList>
 
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
       </div>
