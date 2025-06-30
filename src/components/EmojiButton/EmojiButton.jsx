@@ -1,7 +1,18 @@
 import React, { useState } from "react";
-// import EmojiPicker from "emoji-picker-react";
+import EmojiPicker from "emoji-picker-react";
+import styled from "styled-components";
 
-const EmojiButton = ({ onEmojiSelect, note }) => {
+const StyledBtn = styled.button`
+  height: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* margin: 30px; */
+  padding: 20px;
+`;
+
+const EmojiButton = ({ className, onEmojiSelect, note }) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const handleEmojiClick = (emojiData) => {
@@ -12,9 +23,9 @@ const EmojiButton = ({ onEmojiSelect, note }) => {
   return (
     <div>
       {console.log("emoji render")}
-      <button onClick={() => setIsPickerOpen(!isPickerOpen)}>
+      <StyledBtn className={className} onClick={() => setIsPickerOpen(!isPickerOpen)}>
         {note.emoji || "Y"}
-      </button>
+      </StyledBtn>
 
       {isPickerOpen && (
         <div style={{ position: "absolute", zIndex: 100 }}>
