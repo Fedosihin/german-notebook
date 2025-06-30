@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useReducer } from "react";
+import { act, useEffect, useMemo, useReducer } from "react";
 import "./App.css";
 import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
@@ -131,6 +131,13 @@ function reducer(state, action) {
             : note
         ),
       };
+    case "REMOVE_ACTIVE_NOTE":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.filter(
+          (note) => note.id !== state.activeNoteId
+        ),
+      };
     case "TOGGLE_CHECKBOX":
       return {
         ...state,
@@ -244,6 +251,13 @@ function App() {
     });
   };
 
+  const handleNoteRemove = () => {
+    if (confirm("Уверены?")) {
+      dispatch({ type: "REMOVE_ACTIVE_NOTE" });
+      dispatch({ type: "CLOSE_EDITOR" });
+    }
+  };
+
   const handleEmojiSelect = (id, value) => {
     dispatch({
       type: "UPDATE_NOTE_EMOJI",
@@ -310,6 +324,7 @@ function App() {
             onAddCheckbox={addCheckbox}
             onEmojiSelect={handleEmojiSelect}
             onCheckboxRemove={handleCheckboxRemove}
+            onNoteRemove={handleNoteRemove}
             style={editorStyle}
           ></NoteEditor>
         )}

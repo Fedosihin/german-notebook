@@ -2,6 +2,7 @@ import React from "react";
 import CheckboxItem from "./CheckboxItem";
 import EmojiButton from "../EmojiButton/EmojiButton";
 import styled from "styled-components";
+import RemoveNoteButton from "../RemoveNoteButton/RemoveNoteButton";
 
 const StyledContainer = styled.div`
   min-width: 500px;
@@ -59,6 +60,12 @@ const StyledCheckboxContainer = styled.div`
   /* align-items: flex-start; */
 `;
 
+const StyledButtonsContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+`;
+
 export default function NoteEditor({
   note,
   onClose,
@@ -67,6 +74,7 @@ export default function NoteEditor({
   onAddCheckbox,
   onCheckboxStatusChange,
   onCheckboxTextChange,
+  onNoteRemove,
   onCheckboxRemove,
   onEmojiSelect,
   style,
@@ -124,8 +132,14 @@ export default function NoteEditor({
             );
           })}
         </StyledCheckboxContainer> */}
-        <button onClick={onAddCheckbox}>Добавить чекбокс</button>
-        <button onClick={onClose}>Закрыть</button>
+        <StyledButtonsContainer>
+          <button onClick={onAddCheckbox}>Добавить чекбокс</button>
+          <button onClick={onClose}>Закрыть</button>
+          <RemoveNoteButton
+            note={note}
+            onButtonClick={onNoteRemove}
+          ></RemoveNoteButton>
+        </StyledButtonsContainer>
       </div>
     </StyledContainer>
   );

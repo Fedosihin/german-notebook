@@ -42,7 +42,6 @@ const EmojiButton = ({ className, onEmojiSelect, note }) => {
 
   return (
     <div>
-      {console.log("emoji render")}
       <StyledBtn className={className} onClick={() => setIsPickerOpen(!isPickerOpen)}>
         {note.emoji || "Y"}
       </StyledBtn>
