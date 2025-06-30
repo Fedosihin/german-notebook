@@ -14,7 +14,7 @@ const StyledLi = styled.li`
 `;
 
 const StyledEmojiButton = styled(EmojiButton)`
-  background-color: #b4aaaa;
+  background-color: #465466;
 `;
 
 const StyledDiv = styled.div`

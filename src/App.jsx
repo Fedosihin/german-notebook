@@ -1,11 +1,22 @@
-import { act, useEffect, useMemo, useReducer } from "react";
+import { useEffect, useMemo, useReducer } from "react";
 import "./App.css";
 import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
 import NoteEditor from "./components/NoteEditor/NoteEditor";
+import styled from "styled-components";
 
 // Ключ для localStorage
 const LOCAL_STORAGE_KEY = "notesAppData";
+
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+`;
 
 const getInitialState = () => {
   const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -312,7 +323,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <StyledWrapper>
         {state.isEditorOpen && (
           <NoteEditor
             note={activeNote}
@@ -337,7 +348,7 @@ function App() {
         ></NoteList>
 
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
-      </div>
+      </StyledWrapper>
     </>
   );
 }
