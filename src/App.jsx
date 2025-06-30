@@ -118,16 +118,19 @@ function reducer(state, action) {
       };
     }
     case "REMOVE_CHECKBOX":
-      return {...state,
+      return {
+        ...state,
         listOfLists: state.listOfLists.map((note) =>
           note.id === state.activeNoteId
             ? {
                 ...note,
-                checkboxArray: note.checkboxArray.filter((item) =>
-                  item.id !== action.payload),
+                checkboxArray: note.checkboxArray.filter(
+                  (item) => item.id !== action.payload
+                ),
               }
             : note
-        ),};
+        ),
+      };
     case "TOGGLE_CHECKBOX":
       return {
         ...state,
@@ -249,9 +252,7 @@ function App() {
   };
 
   const handleCheckboxRemove = (checkboxId) => {
-    // console.log("noteId " + noteId);
-    // console.log("checboxId " + checkboxId);
-        dispatch({
+    dispatch({
       type: "REMOVE_CHECKBOX",
       payload: checkboxId,
     });

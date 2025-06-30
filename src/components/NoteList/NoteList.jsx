@@ -3,7 +3,6 @@ import NoteListItem from "./NoteListItem";
 import styled from "styled-components";
 
 const StyledUl = styled.ul`
-  background-color: red;
   list-style: none;
   padding: 0;
   margin: 0;

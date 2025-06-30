@@ -3,36 +3,22 @@ import EmojiButton from "../EmojiButton/EmojiButton";
 import styled from "styled-components";
 
 const StyledLi = styled.li`
-  /* background-color: pink;
   display: flex;
-  width: 100%;
-  flex: 1;
-  align-items: center;
-  min-height: 80px; */
-  display: flex;
-  align-items: center; /* Вертикальное выравнивание */
-  gap: 12px; /* Расстояние между кнопкой и текстом */
+  align-items: center; 
+  gap: 12px; 
   padding: 10px 15px;
   border-radius: 8px;
-  background: #f5f5f5;
-  margin-bottom: 8px; /* Отступ между пунктами */
+  background-color: #f5f5f5;
+  margin-bottom: 8px; 
   transition: all 0.3s;
 `;
 
 const StyledEmojiButton = styled(EmojiButton)`
-  /* margin-right: 30px; Вот это ключевое правило */
+  background-color: #b4aaaa;
 `;
 
 const StyledDiv = styled.div`
-  /* flex: 1; */
-  /* height: 100%; */
-  /* cursor: pointer;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; */
-  flex-grow: 1; /* Занимает всё свободное место */
+  flex-grow: 1; 
   padding: 12px 16px;
   cursor: pointer;
   background-color: black;
@@ -56,7 +42,6 @@ export default function NoteListItem({ note, onClick, style, onEmojiSelect }) {
       ></StyledEmojiButton>
       <StyledDiv
         onClick={onClick}
-        // style={{ cursor: "pointer" }}
         style={style}
       >
         <StyledSpan>{note.title}</StyledSpan>
