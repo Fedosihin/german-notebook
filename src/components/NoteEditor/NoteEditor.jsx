@@ -1,5 +1,6 @@
 import React from "react";
 import CheckboxItem from "./CheckboxItem";
+import EmojiButton from "../EmojiButton/EmojiButton";
 
 export default function NoteEditor({
   note,
@@ -9,13 +10,13 @@ export default function NoteEditor({
   onAddCheckbox,
   onCheckboxStatusChange,
   onCheckboxTextChange,
-  style
+  onEmojiSelect,
+  style,
 }) {
   return (
       <div className="modal" style={style}>
         <div className="modal-content">
-          <h2>Модальное окно</h2>
-          <h3>{note.title}</h3>
+          <EmojiButton note={note} onEmojiSelect={onEmojiSelect}></EmojiButton>
           <input
             type="text"
             placeholder="Введите заголовок..."

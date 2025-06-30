@@ -15,6 +15,7 @@ const getInitialState = () => {
         {
           id: 0,
           title: "first list",
+          emoji: "idk",
           text: "first text",
           checkboxArray: [
             {
@@ -86,6 +87,15 @@ function reducer(state, action) {
         listOfLists: state.listOfLists.map((note) =>
           note.id === state.activeNoteId
             ? { ...note, [action.payload.property]: action.payload.value }
+            : note
+        ),
+      };
+    case "UPDATE_NOTE_EMOJI":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === action.payload.id
+            ? { ...note, emoji: action.payload.emoji}
             : note
         ),
       };
@@ -161,8 +171,6 @@ function App() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state.listOfLists));
   }, [state.listOfLists]);
 
-  
-
   const activeNote = useMemo(
     () =>
       state.listOfLists.find((note) => note.id === state.activeNoteId) ||
@@ -222,6 +230,13 @@ function App() {
     });
   };
 
+  const handleEmojiSelect = (id, value) => {
+    dispatch({
+      type: "UPDATE_NOTE_EMOJI",
+      payload: { id, emoji: value },
+    });
+  };
+
   // Рассчитываем процент выполнения
   const completionPercentage = useMemo(() => {
     if (!activeNote?.checkboxArray?.length) return 0;
@@ -258,7 +273,6 @@ function App() {
     };
   };
 
-
   return (
     <>
       <div>
@@ -271,6 +285,7 @@ function App() {
             onCheckboxTextChange={handleCheckboxTextChange}
             onTextChange={handleTextChange}
             onAddCheckbox={addCheckbox}
+            onEmojiSelect={handleEmojiSelect}
             style={editorStyle}
           ></NoteEditor>
         )}
@@ -279,6 +294,7 @@ function App() {
           getItemStyle={listItemStyle}
           notes={state.listOfLists}
           onNoteClick={handleNoteClick}
+          onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
