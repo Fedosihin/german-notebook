@@ -95,7 +95,7 @@ function reducer(state, action) {
         ...state,
         listOfLists: state.listOfLists.map((note) =>
           note.id === action.payload.id
-            ? { ...note, emoji: action.payload.emoji}
+            ? { ...note, emoji: action.payload.emoji }
             : note
         ),
       };
@@ -117,6 +117,17 @@ function reducer(state, action) {
         ),
       };
     }
+    case "REMOVE_CHECKBOX":
+      return {...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                checkboxArray: note.checkboxArray.filter((item) =>
+                  item.id !== action.payload),
+              }
+            : note
+        ),};
     case "TOGGLE_CHECKBOX":
       return {
         ...state,
@@ -237,6 +248,15 @@ function App() {
     });
   };
 
+  const handleCheckboxRemove = (checkboxId) => {
+    // console.log("noteId " + noteId);
+    // console.log("checboxId " + checkboxId);
+        dispatch({
+      type: "REMOVE_CHECKBOX",
+      payload: checkboxId,
+    });
+  };
+
   // Рассчитываем процент выполнения
   const completionPercentage = useMemo(() => {
     if (!activeNote?.checkboxArray?.length) return 0;
@@ -253,7 +273,9 @@ function App() {
     const hue = completionPercentage * 1.2; // 0-120
     return {
       backgroundColor: `hsl(${hue}, 100%, 50%)`,
-      background: `linear-gradient(135deg, hsl(${hue}, 100%, 50%), hsl(${hue}, 100%, 40%))`,
+      // background: `linear-gradient(135deg, hsl(${hue}, 100%, 10%), hsl(${hue}, 100%, 10%))`,
+      background: `hsl(${hue}, 10%, 20%)`,
+      // Cломал тут !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     };
   }, [completionPercentage]);
 
@@ -286,6 +308,7 @@ function App() {
             onTextChange={handleTextChange}
             onAddCheckbox={addCheckbox}
             onEmojiSelect={handleEmojiSelect}
+            onCheckboxRemove={handleCheckboxRemove}
             style={editorStyle}
           ></NoteEditor>
         )}

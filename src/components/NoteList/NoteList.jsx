@@ -4,6 +4,10 @@ import styled from "styled-components";
 
 const StyledUl = styled.ul`
   background-color: red;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 300px; 
 `;
 
 export default function NoteList({ notes, onNoteClick, getItemStyle, onEmojiSelect }) {
