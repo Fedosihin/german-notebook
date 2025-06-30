@@ -5,6 +5,6 @@ const StyledButton = styled.button`
   background-color: red;
 `;
 
-export default function RemoveNoteButton({onButtonClick, note}) {
-  return <StyledButton onClick={()=>{onButtonClick(note.id)}}>Удалить запись</StyledButton>;
+export default function RemoveNoteButton({onButtonClick}) {
+  return <StyledButton onClick={()=>{onButtonClick()}}>Удалить запись</StyledButton>;
 }

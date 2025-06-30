@@ -3,6 +3,7 @@ import CheckboxItem from "./CheckboxItem";
 import EmojiButton from "../EmojiButton/EmojiButton";
 import styled from "styled-components";
 import RemoveNoteButton from "../RemoveNoteButton/RemoveNoteButton";
+import AutoTextarea from "../AutoTextarea/AutoTextarea";
 
 const StyledContainer = styled.div`
   min-width: 500px;
@@ -47,6 +48,12 @@ const StyledTextarea = styled.textarea`
   font-weight: 600;
   color: #ffffff;
   color: rgba(255, 255, 255, 0.9);
+
+  /* Отключаем ручное изменение */
+  resize: none;
+  overflow: hidden;
+  min-height: 50px;
+  height: 50px;
 
   &:focus {
     outline: none;
@@ -111,12 +118,17 @@ export default function NoteEditor({
             );
           })}
         </StyledCheckboxContainer>
-        <StyledTextarea
+        {/* <StyledTextarea
           value={note.text}
           onChange={(e) => onTextChange(e)}
           placeholder="Введите текст..."
           rows={10}
           style={{ width: "100%" }}
+        /> */}
+        <AutoTextarea
+          value={note.text}
+          onChange={(e) => onTextChange(e)}
+          placeholder="Введите текст..."
         />
         {/* <p>{listOfLists[activeListIndex].text}</p> */}
         {/*  */}
@@ -136,7 +148,6 @@ export default function NoteEditor({
           <button onClick={onAddCheckbox}>Добавить чекбокс</button>
           <button onClick={onClose}>Закрыть</button>
           <RemoveNoteButton
-            note={note}
             onButtonClick={onNoteRemove}
           ></RemoveNoteButton>
         </StyledButtonsContainer>
