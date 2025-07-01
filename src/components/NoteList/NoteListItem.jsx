@@ -1,15 +1,17 @@
 import React from "react";
 import EmojiButton from "../EmojiButton/EmojiButton";
 import styled from "styled-components";
+import PlaceholderSpan from "../PlaceholderSpan/PlaceholderSpan";
+
 
 const StyledLi = styled.li`
   display: flex;
-  align-items: center; 
-  gap: 12px; 
+  align-items: center;
+  gap: 12px;
   padding: 10px 15px;
   border-radius: 8px;
   background-color: #f5f5f5;
-  margin-bottom: 8px; 
+  margin-bottom: 8px;
   transition: all 0.3s;
 `;
 
@@ -18,11 +20,16 @@ const StyledEmojiButton = styled(EmojiButton)`
 `;
 
 const StyledDiv = styled.div`
-  flex-grow: 1; 
+  flex-grow: 1;
   padding: 12px 16px;
   cursor: pointer;
   background-color: black;
   transition: background 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* ПОДУМАТЬ */
+  /* text-align: left; */
 `;
 
 const StyledSpan = styled.span`
@@ -40,11 +47,8 @@ export default function NoteListItem({ note, onClick, style, onEmojiSelect }) {
         onEmojiSelect={onEmojiSelect}
         note={note}
       ></StyledEmojiButton>
-      <StyledDiv
-        onClick={onClick}
-        style={style}
-      >
-        <StyledSpan>{note.title}</StyledSpan>
+      <StyledDiv onClick={onClick} style={style}>
+        <PlaceholderSpan placeholder={"Введите название..."}>{note.title}</PlaceholderSpan>
       </StyledDiv>
     </StyledLi>
   );

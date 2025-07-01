@@ -283,6 +283,19 @@ function App() {
     });
   };
 
+  const handleBlur = (e) => {
+    const trimmedValue = e.target.value.trim();
+    // Проверяем, не пустая ли строка после обрезки пробелов
+    if (trimmedValue === "") {
+      // setError("Текст не может состоять только из пробелов");
+      // setValue(""); // Очищаем инпут, если были только пробелы
+      updateNoteProperty("title", "");
+    } else {
+      updateNoteProperty("title", trimmedValue);
+      // setValue(trimmedValue); // Сохраняем обрезанное значение
+    }
+  };
+
   // Рассчитываем процент выполнения
   const completionPercentage = useMemo(() => {
     if (!activeNote?.checkboxArray?.length) return 0;
@@ -336,6 +349,7 @@ function App() {
             onEmojiSelect={handleEmojiSelect}
             onCheckboxRemove={handleCheckboxRemove}
             onNoteRemove={handleNoteRemove}
+            onBlur={handleBlur}
             style={editorStyle}
           ></NoteEditor>
         )}

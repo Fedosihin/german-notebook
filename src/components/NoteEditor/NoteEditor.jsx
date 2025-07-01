@@ -84,6 +84,7 @@ export default function NoteEditor({
   onNoteRemove,
   onCheckboxRemove,
   onEmojiSelect,
+  onBlur,
   style,
 }) {
   return (
@@ -100,6 +101,7 @@ export default function NoteEditor({
             onChange={(e) => {
               onTitleChange(e);
             }}
+            onBlur={(e) => {onBlur(e);}}
             value={note.title}
           />
         </StyledHeaderContainer>

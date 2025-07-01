@@ -6,7 +6,7 @@ const StyledUl = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  max-width: 300px; 
+  width: 300px; 
 `;
 
 export default function NoteList({ notes, onNoteClick, getItemStyle, onEmojiSelect }) {
