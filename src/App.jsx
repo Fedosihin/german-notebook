@@ -16,6 +16,12 @@ const StyledWrapper = styled.div`
   max-width: 700px;
   margin: 0 auto;
   padding: 20px;
+
+  @media (max-width: 480px) {
+    padding: 5px;
+    margin: 0 0;
+    background-color: #636363;
+  }
 `;
 
 const getInitialState = () => {
@@ -313,7 +319,7 @@ function App() {
     return {
       backgroundColor: `hsl(${hue}, 100%, 50%)`,
       // background: `linear-gradient(135deg, hsl(${hue}, 100%, 10%), hsl(${hue}, 100%, 10%))`,
-      background: `hsl(${hue}, 10%, 20%)`,
+      background: `hsl(${hue}, 20%, 30%)`,
       // Cломал тут !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     };
   }, [completionPercentage]);

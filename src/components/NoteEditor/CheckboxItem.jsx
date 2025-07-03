@@ -12,12 +12,71 @@ const StyledContainer = styled.div`
 const StyledCheckbox = styled.input`
   height: 20px;
   width: 20px;
+  ${({ $checked }) =>
+    $checked &&
+    `
+    text-decoration: line-through;
+    color: gray;
+    opacity: 0.7;
+  `}
+`;
+
+const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
+  position: absolute;
+  opacity: 0;
+`;
+
+const StyledNewCheckbox = styled.div`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-color: ${({ checked }) => (checked ? "#2e2e2e" : "#ccc")};;
+  border-radius: 4px;
+  background: ${({ checked }) => (checked ? "transparent" : "transparent")};
+
+  &::after {
+    content: "✓";
+    color: #131313;
+    display: ${({ checked }) => (checked ? "block" : "none")};
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ${({ $checked }) =>
+    $checked &&
+    `
+    background: gray;
+    color: gray;
+    opacity: 0.7;
+  `} */
+`;
+
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  /* Отключаем поглощение клика у детей */
+  & * {
+    pointer-events: none;
+  }
 `;
 
 const StyledInput = styled.input`
   /* width: 100%; */
   flex-grow: 1;
   font-size: inherit;
+  ${({ $checked }) =>
+    $checked &&
+    `
+    text-decoration: line-through;
+    color: gray;
+    opacity: 0.7;
+  `}
 `;
 
 const StyledButton = styled.button`
@@ -48,12 +107,21 @@ export default function CheckboxItem({
 }) {
   return (
     <StyledContainer>
-      <StyledCheckbox
+      <Label>
+        <HiddenCheckbox
+          checked={item.checked}
+          onChange={() => onStatusChange(item.id)}
+        ></HiddenCheckbox>
+        <StyledNewCheckbox checked={item.checked}></StyledNewCheckbox>
+        {/* <StyledCheckbox
+        $checked={item.checked}
         type="checkbox"
         checked={item.checked}
         onChange={() => onStatusChange(item.id)}
-      />
+      /> */}
+      </Label>
       <StyledInput
+        $checked={item.checked}
         className={className}
         type="text"
         value={item.text}
@@ -61,7 +129,13 @@ export default function CheckboxItem({
           onTextChange(item.id, e.target.value);
         }}
       />
-      <StyledButton onClick={()=>{onCheckboxRemove(item.id)}}>Х</StyledButton>
+      <StyledButton
+        onClick={() => {
+          onCheckboxRemove(item.id);
+        }}
+      >
+        Х
+      </StyledButton>
     </StyledContainer>
   );
 }

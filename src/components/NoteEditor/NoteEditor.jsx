@@ -12,7 +12,13 @@ const StyledContainer = styled.div`
   padding: 8px;
   background-color: #ffffff;
   margin-bottom: 16px;
+
+  @media (max-width: 480px) {
+    min-width: 200px;
+  }
+
 `;
+StyledContainer.displayName = "MyAwesomeButton";
 
 const StyledHeaderContainer = styled.div`
   display: flex;

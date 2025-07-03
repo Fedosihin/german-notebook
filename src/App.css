@@ -5,6 +5,15 @@
   text-align: center;
 }
 
+@media (max-width: 480px) {
+  #root {
+    /* padding: 5px; */
+    /* margin: 0 0; */
+    padding: 6px;
+    /* background-color: #636363; */
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
