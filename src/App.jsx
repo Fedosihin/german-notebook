@@ -384,6 +384,7 @@ function App() {
             style={editorStyle}
           ></NoteEditor>
         )}
+<AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
 
         <NoteList
           getItemStyle={listItemStyle}
@@ -392,7 +393,6 @@ function App() {
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
-        <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
       </StyledWrapper>
     </>
   );
