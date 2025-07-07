@@ -113,6 +113,13 @@ const StyledTextarea = styled(AutoTextarea)`
     /* outline: 1px ridge rgba(255, 255, 255, 0.8); */
     outline: 1px solid rgba(255, 255, 255, 0.8);
   }
+  ${({ $checked }) =>
+    $checked &&
+    `
+    text-decoration: line-through;
+    color: gray;
+    opacity: 0.7;
+  `}
 `;
 
 const StyledButton = styled.button`
