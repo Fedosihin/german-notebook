@@ -88,8 +88,8 @@ function reducer(state, action) {
     case "CREATE_NOTE": {
       const newNote = {
         id: Date.now(),
-        title: "Пустой заголовок",
-        text: "Пустой текст",
+        title: "",
+        text: "",
         checkboxArray: [],
       };
       return {
@@ -120,7 +120,7 @@ function reducer(state, action) {
       const newCheckbox = {
         id: Date.now(),
         checked: false,
-        text: "Новый пункт",
+        text: "",
       };
       return {
         ...state,
