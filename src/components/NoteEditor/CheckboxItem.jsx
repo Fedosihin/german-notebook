@@ -177,6 +177,7 @@ export default function CheckboxItem({
         type="text"
         value={item.text}
         onKeyDown={handleKeyDown}
+        // autoFocus={item.id === inputs.length - 1} 
         onChange={(e) => {
           onTextChange(item.id, e.target.value);
         }}

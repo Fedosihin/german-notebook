@@ -344,8 +344,23 @@ function App() {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Предотвращаем перевод строки
       // handleSubmit(); // Вызываем функцию
-    dispatch({ type: "ADD_CHECKBOX" });
-      
+      // dispatch({ type: "ADD_CHECKBOX" }).then(()=>{
+      //   const nextInput = document.querySelector("#checkboxesList > div:last-child");
+      //   console.log(nextInput);
+      //   nextInput.focus();
+      // });
+      // dispatch({ type: "ADD_CHECKBOX" });
+      // const nextInput = document.querySelector("#checkboxesList > div:last-child");
+      // console.log(nextInput);
+      // nextInput.focus();
+      dispatch({ type: "ADD_CHECKBOX" });
+      setTimeout(() => {
+        const nextInput = document.querySelector(
+          "#checkboxesList > div:last-child textarea"
+        );
+        console.log(nextInput);
+        nextInput.focus();
+      }, 0);
     }
   };
 

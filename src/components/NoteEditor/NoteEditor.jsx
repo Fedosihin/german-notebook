@@ -105,7 +105,7 @@ export default function NoteEditor({
   onKeyDown,
 }) {
   return (
-    <StyledContainer className="modal" style={style}>
+    <StyledContainer id="editor" className="modal" style={style}>
       <div className="modal-content">
         <StyledHeaderContainer>
           <EmojiButton note={note} onEmojiSelect={onEmojiSelect}></EmojiButton>
@@ -125,7 +125,7 @@ export default function NoteEditor({
           />
         </StyledHeaderContainer>
         {/* <p>Содержимое модального окна</p> */}
-        <StyledCheckboxContainer>
+        <StyledCheckboxContainer id="checkboxesList">
           {note.checkboxArray.map((item) => {
             return (
               <CheckboxItem
