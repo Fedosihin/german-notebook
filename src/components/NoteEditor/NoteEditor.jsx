@@ -10,13 +10,13 @@ const StyledContainer = styled.div`
   border-radius: 8px;
   border: 1px #ffffff solid;
   padding: 8px;
+  
   background-color: #ffffff;
   margin-bottom: 16px;
 
   @media (max-width: 480px) {
     min-width: 200px;
   }
-
 `;
 StyledContainer.displayName = "MyAwesomeButton";
 
@@ -58,8 +58,8 @@ const StyledTextarea = styled.textarea`
   /* Отключаем ручное изменение */
   resize: none;
   overflow: hidden;
-  min-height: 50px;
-  height: 50px;
+  min-height: 25px;
+  height: 25px;
 
   &:focus {
     outline: none;
@@ -69,7 +69,8 @@ const StyledTextarea = styled.textarea`
 const StyledCheckboxContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  margin-bottom: 10px;
   /* align-items: flex-start; */
 `;
 
@@ -77,6 +78,15 @@ const StyledButtonsContainer = styled.div`
   display: flex;
   gap: 10px;
   justify-content: center;
+`;
+
+const StyledAutoTextarea = styled(AutoTextarea)`
+font-size: 16px ;
+padding: 0;
+border: none;
+  &:focus {
+    outline: none;
+  }
 `;
 
 export default function NoteEditor({
@@ -107,7 +117,9 @@ export default function NoteEditor({
             onChange={(e) => {
               onTitleChange(e);
             }}
-            onBlur={(e) => {onBlur(e);}}
+            onBlur={(e) => {
+              onBlur(e);
+            }}
             value={note.title}
           />
         </StyledHeaderContainer>
@@ -133,7 +145,7 @@ export default function NoteEditor({
           rows={10}
           style={{ width: "100%" }}
         /> */}
-        <AutoTextarea
+        <StyledAutoTextarea
           value={note.text}
           onChange={(e) => onTextChange(e)}
           placeholder="Введите текст..."
@@ -155,9 +167,7 @@ export default function NoteEditor({
         <StyledButtonsContainer>
           <button onClick={onAddCheckbox}>Добавить чекбокс</button>
           <button onClick={onClose}>Закрыть</button>
-          <RemoveNoteButton
-            onButtonClick={onNoteRemove}
-          ></RemoveNoteButton>
+          <RemoveNoteButton onButtonClick={onNoteRemove}></RemoveNoteButton>
         </StyledButtonsContainer>
       </div>
     </StyledContainer>

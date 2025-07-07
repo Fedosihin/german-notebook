@@ -1,11 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import AutoTextarea from "../AutoTextarea/AutoTextarea";
 
 const StyledContainer = styled.div`
   width: 100%;
   display: flex;
   gap: 8px;
-  align-items: center;
+  /* align-items: center; */
+  align-items: flex-start;
   font-size: 16px;
 `;
 
@@ -31,7 +33,7 @@ const StyledNewCheckbox = styled.div`
   width: 20px;
   height: 20px;
   border: 2px solid #ccc;
-  border-color: ${({ checked }) => (checked ? "#2e2e2e" : "#ccc")};;
+  border-color: ${({ checked }) => (checked ? "#2e2e2e" : "#ccc")};
   border-radius: 4px;
   background: ${({ checked }) => (checked ? "transparent" : "transparent")};
 
@@ -66,10 +68,22 @@ const Label = styled.label`
   }
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled.textarea`
   /* width: 100%; */
   flex-grow: 1;
   font-size: inherit;
+  resize: none;
+  overflow: hidden;
+  min-height: 20px;
+  line-height: 1;
+  height: 15px;
+  &:focus {
+    outline-width: 1px;
+    outline-color: rgba(143, 143, 143, 0.459);
+    /* outline: 1px ridge rgb(143 143 143 / 0.6); */
+    /* outline: 1px ridge rgba(255, 255, 255, 0.8); */
+    outline: 1px solid rgba(255, 255, 255, 0.8);
+  }
   ${({ $checked }) =>
     $checked &&
     `
@@ -77,6 +91,28 @@ const StyledInput = styled.input`
     color: gray;
     opacity: 0.7;
   `}
+`;
+
+const StyledTextarea = styled(AutoTextarea)`
+  background-color: rgb(59, 59, 59);
+  color: rgb(255, 255, 255);
+  /* border: 1px solid rgb(133, 133, 133); */
+  outline: 1px solid rgb(133, 133, 133);
+  border-radius: 4px;
+  min-height: 25px;
+  height: 25px;
+  padding: 0;
+  line-height: 1;
+  border: none;
+  font-size: 20px;
+
+  &:focus {
+    outline-width: 1px;
+    outline-color: rgba(143, 143, 143, 0.459);
+    /* outline: 1px ridge rgb(143 143 143 / 0.6); */
+    /* outline: 1px ridge rgba(255, 255, 255, 0.8); */
+    outline: 1px solid rgba(255, 255, 255, 0.8);
+  }
 `;
 
 const StyledButton = styled.button`
@@ -120,7 +156,14 @@ export default function CheckboxItem({
         onChange={() => onStatusChange(item.id)}
       /> */}
       </Label>
-      <StyledInput
+      {/* <AutoTextarea $checked={item.checked}
+        className={className}
+        type="text"
+        value={item.text}
+        onChange={(e) => {
+          onTextChange(item.id, e.target.value);
+        }}></AutoTextarea> */}
+      <StyledTextarea
         $checked={item.checked}
         className={className}
         type="text"
@@ -128,7 +171,17 @@ export default function CheckboxItem({
         onChange={(e) => {
           onTextChange(item.id, e.target.value);
         }}
-      />
+      ></StyledTextarea>
+
+      {/* <StyledInput
+        $checked={item.checked}
+        className={className}
+        type="text"
+        value={item.text}
+        onChange={(e) => {
+          onTextChange(item.id, e.target.value);
+        }}
+      /> */}
       <StyledButton
         onClick={() => {
           onCheckboxRemove(item.id);
