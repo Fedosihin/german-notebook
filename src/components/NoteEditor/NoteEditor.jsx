@@ -102,6 +102,7 @@ export default function NoteEditor({
   onEmojiSelect,
   onBlur,
   style,
+  onKeyDown,
 }) {
   return (
     <StyledContainer className="modal" style={style}>
@@ -134,6 +135,7 @@ export default function NoteEditor({
                 item={item}
                 onStatusChange={onCheckboxStatusChange}
                 onTextChange={onCheckboxTextChange}
+                handleKeyDown={onKeyDown}
               />
             );
           })}

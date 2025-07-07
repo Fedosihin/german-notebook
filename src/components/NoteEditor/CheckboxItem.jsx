@@ -147,6 +147,7 @@ export default function CheckboxItem({
   onTextChange,
   onStatusChange,
   onCheckboxRemove,
+  handleKeyDown,
 }) {
   return (
     <StyledContainer>
@@ -175,6 +176,7 @@ export default function CheckboxItem({
         className={className}
         type="text"
         value={item.text}
+        onKeyDown={handleKeyDown}
         onChange={(e) => {
           onTextChange(item.id, e.target.value);
         }}

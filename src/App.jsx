@@ -340,6 +340,15 @@ function App() {
     };
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Предотвращаем перевод строки
+      // handleSubmit(); // Вызываем функцию
+    dispatch({ type: "ADD_CHECKBOX" });
+      
+    }
+  };
+
   return (
     <>
       <StyledWrapper>
@@ -356,6 +365,7 @@ function App() {
             onCheckboxRemove={handleCheckboxRemove}
             onNoteRemove={handleNoteRemove}
             onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
             style={editorStyle}
           ></NoteEditor>
         )}
