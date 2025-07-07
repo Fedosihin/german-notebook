@@ -30,9 +30,11 @@ export default function AutoTextarea({ value, onChange, ...props }) {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = "auto";
-      const newHeight = value.split('\n').length <= 1 
-        ? lineHeight + 'px'  // Для одной строки - ровно line-height
-        : textarea.scrollHeight + 'px'; // Для нескольких строк - по содержимому
+      // const newHeight = value.split('\n').length <= 1 
+      //   ? lineHeight + 'px'  // Для одной строки - ровно line-height
+      //   : textarea.scrollHeight + 'px'; // Для нескольких строк - по содержимому
+        
+      const newHeight = textarea.scrollHeight + 'px'; // Для нескольких строк - по содержимому
         
       // Добавляем padding, если он есть (важно при box-sizing: content-box)
       const padding = parseInt(window.getComputedStyle(textarea).paddingTop, 10) + 
