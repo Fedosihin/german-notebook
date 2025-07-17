@@ -59,8 +59,11 @@ const getInitialState = () => {
 
 const initialState = {
   listOfLists: getInitialState(),
+  archiveListOfLists: [],
   isEditorOpen: false,
+  isArchiveEditorOpen: false,
   activeNoteId: 0,
+  activeArchiveNoteId: 0,
 };
 
 function reducer(state, action) {
@@ -96,6 +99,13 @@ function reducer(state, action) {
         ...state,
         listOfLists: [...state.listOfLists, newNote],
         activeNoteId: newNote.id,
+      };
+    }
+    case "SEND_IN_ARCHIVE": {
+      const newArchiveNote = action.payload;
+      return {
+        ...state,
+        archiveListOfLists: [...state.archiveListOfLists, newArchiveNote],
       };
     }
     case "UPDATE_NOTE_PROPERTY":
@@ -214,6 +224,13 @@ function App() {
       state.listOfLists.find((note) => note.id === state.activeNoteId) ||
       state.listOfLists[0],
     [state.listOfLists, state.activeNoteId]
+  );
+
+    const activeArchiveNote = useMemo(
+    () =>
+      state.archiveListOfLists.find((note) => note.id === state.activeArchiveNoteId) ||
+      state.archiveListOfLists[0],
+    [state.archiveListOfLists, state.activeArchiveNoteId]
   );
 
   const openEditor = () => {
@@ -364,6 +381,21 @@ function App() {
     }
   };
 
+  const handleSendInArchive = (id) => {
+    //get id +
+    //get note +
+    const note = state.listOfLists.find((item) => item.id === id);
+    console.log(note);
+    console.dir(note);
+    //send in archive +
+    dispatch({
+      type: "SEND_IN_ARCHIVE",
+      payload: note,
+    });
+
+    //delete
+  };
+
   return (
     <>
       <StyledWrapper>
@@ -381,10 +413,11 @@ function App() {
             onNoteRemove={handleNoteRemove}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
+            onSendInArchive={handleSendInArchive}
             style={editorStyle}
           ></NoteEditor>
         )}
-<AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
+        <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
 
         <NoteList
           getItemStyle={listItemStyle}
@@ -393,6 +426,31 @@ function App() {
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
+        <h2>ARCHIVE</h2>
+         {state.isArchiveEditorOpen && (
+          <NoteEditor
+            note={activeArchiveNote}
+            onClose={closeEditor}
+            onTitleChange={handleTitleChange}
+            onCheckboxStatusChange={handleCheckboxStatusChange}
+            onCheckboxTextChange={handleCheckboxTextChange}
+            onTextChange={handleTextChange}
+            onAddCheckbox={addCheckbox}
+            onEmojiSelect={handleEmojiSelect}
+            onCheckboxRemove={handleCheckboxRemove}
+            onNoteRemove={handleNoteRemove}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            onSendInArchive={handleSendInArchive}
+            style={editorStyle}
+          ></NoteEditor>
+        )}
+        <NoteList
+          getItemStyle={listItemStyle}
+          notes={state.archiveListOfLists}
+          onNoteClick={handleNoteClick}
+          onEmojiSelect={handleEmojiSelect}
+        ></NoteList>
       </StyledWrapper>
     </>
   );

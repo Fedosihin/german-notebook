@@ -103,6 +103,7 @@ export default function NoteEditor({
   onBlur,
   style,
   onKeyDown,
+  onSendInArchive,
 }) {
   return (
     <StyledContainer id="editor" className="modal" style={style}>
@@ -171,6 +172,7 @@ export default function NoteEditor({
           <button onClick={onClose}>Закрыть</button>
           <RemoveNoteButton onButtonClick={onNoteRemove}></RemoveNoteButton>
         </StyledButtonsContainer>
+          <button onClick={()=>{onSendInArchive(note.id)}}>Отправить в архив</button>
       </div>
     </StyledContainer>
   );
