@@ -60,6 +60,7 @@ const getInitialState = () => {
 const initialState = {
   listOfLists: getInitialState(),
   isEditorOpen: false,
+  isArchiveOpen: false,
   activeNoteId: 0,
 };
 
@@ -80,6 +81,16 @@ function reducer(state, action) {
         ...state,
         isEditorOpen: false,
       };
+    case "OPEN_ARCHIVE":
+      return {
+        ...state,
+        isArchiveOpen: true,
+      };
+    case "CLOSE_ARCHIVE":
+      return {
+        ...state,
+        isArchiveOpen: false,
+      };
     case "SET_ACTIVE_NOTE":
       return {
         ...state,
@@ -90,6 +101,7 @@ function reducer(state, action) {
         id: Date.now(),
         title: "",
         text: "",
+        isArchived: false,
         checkboxArray: [],
       };
       return {
@@ -167,6 +179,18 @@ function reducer(state, action) {
                     ? { ...item, checked: !item.checked }
                     : item
                 ),
+              }
+            : note
+        ),
+      };
+    case "SEND_IN_ARCHIVE":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                isArchived: !note.isArchived,
               }
             : note
         ),
@@ -364,6 +388,10 @@ function App() {
     }
   };
 
+  const handleSendInArchive = () => {
+    dispatch({ type: "SEND_IN_ARCHIVE" });
+  };
+
   return (
     <>
       <StyledWrapper>
@@ -381,18 +409,40 @@ function App() {
             onNoteRemove={handleNoteRemove}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
+            onSendInArchive={handleSendInArchive}
             style={editorStyle}
           ></NoteEditor>
         )}
-<AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
+        <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
 
         <NoteList
           getItemStyle={listItemStyle}
           notes={state.listOfLists}
+          hideArchive={true}
           onNoteClick={handleNoteClick}
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
+        <button
+          onClick={() => {
+            
+            if (state.isArchiveOpen) {
+              dispatch({ type: "CLOSE_ARCHIVE" });
+            } else {
+              dispatch({ type: "OPEN_ARCHIVE" });
+            }
+          }}
+        >ARCHIVE</button>
+        {state.isArchiveOpen && (
+          <NoteList
+            getItemStyle={listItemStyle}
+            notes={state.listOfLists}
+            // hideArchive={false}
+            hideNotArchive={true}
+            onNoteClick={handleNoteClick}
+            onEmojiSelect={handleEmojiSelect}
+          ></NoteList>
+        )}
       </StyledWrapper>
     </>
   );

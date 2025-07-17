@@ -8,10 +8,17 @@ const StyledUl = styled.ul`
   margin: 0;
   display: flex;
   flex-direction: column-reverse;
-  width: 300px; 
+  width: 300px;
 `;
 
-export default function NoteList({ notes, onNoteClick, getItemStyle, onEmojiSelect }) {
+export default function NoteList({
+  notes,
+  onNoteClick,
+  getItemStyle,
+  onEmojiSelect,
+  hideArchive = false,
+  hideNotArchive = false,
+}) {
   return (
     <StyledUl>
       {notes.map((note) => {
@@ -21,6 +28,8 @@ export default function NoteList({ notes, onNoteClick, getItemStyle, onEmojiSele
             key={note.id}
             note={note}
             onClick={() => onNoteClick(note.id)}
+            hideArchive={hideArchive}
+            hideNotArchive={hideNotArchive}
             onEmojiSelect={onEmojiSelect}
           ></NoteListItem>
         );
