@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   border-radius: 8px;
   border: 1px #ffffff solid;
   padding: 8px;
-  
+
   background-color: #ffffff;
   margin-bottom: 16px;
 
@@ -81,9 +81,9 @@ const StyledButtonsContainer = styled.div`
 `;
 
 const StyledAutoTextarea = styled(AutoTextarea)`
-font-size: 16px ;
-padding: 0;
-border: none;
+  font-size: 16px;
+  padding: 0;
+  border: none;
   &:focus {
     outline: none;
   }
@@ -103,6 +103,7 @@ export default function NoteEditor({
   onBlur,
   style,
   onKeyDown,
+  onSendInArchive,
 }) {
   return (
     <StyledContainer id="editor" className="modal" style={style}>
@@ -171,6 +172,7 @@ export default function NoteEditor({
           <button onClick={onClose}>Закрыть</button>
           <RemoveNoteButton onButtonClick={onNoteRemove}></RemoveNoteButton>
         </StyledButtonsContainer>
+        <button onClick={onSendInArchive}>Архив?</button>
       </div>
     </StyledContainer>
   );

@@ -3,7 +3,6 @@ import EmojiButton from "../EmojiButton/EmojiButton";
 import styled from "styled-components";
 import PlaceholderSpan from "../PlaceholderSpan/PlaceholderSpan";
 
-
 const StyledLi = styled.li`
   display: flex;
   align-items: center;
@@ -40,16 +39,30 @@ const StyledSpan = styled.span`
   text-overflow: ellipsis;
 `;
 
-export default function NoteListItem({ note, onClick, style, onEmojiSelect }) {
-  return (
-    <StyledLi>
-      <StyledEmojiButton
-        onEmojiSelect={onEmojiSelect}
-        note={note}
-      ></StyledEmojiButton>
-      <StyledDiv onClick={onClick} style={style}>
-        <PlaceholderSpan placeholder={"Введите название..."}>{note.title}</PlaceholderSpan>
-      </StyledDiv>
-    </StyledLi>
-  );
+export default function NoteListItem({
+  note,
+  onClick,
+  style,
+  onEmojiSelect,
+  hideArchive = false,
+  hideNotArchive = false,
+}) {
+  if (hideArchive === true && note.isArchived === true) {
+    return;
+  } else if (hideNotArchive === true && note.isArchived === false) {
+    return;
+  } else
+    return (
+      <StyledLi>
+        <StyledEmojiButton
+          onEmojiSelect={onEmojiSelect}
+          note={note}
+        ></StyledEmojiButton>
+        <StyledDiv onClick={onClick} style={style}>
+          <PlaceholderSpan placeholder={"Введите название..."}>
+            {note.title}
+          </PlaceholderSpan>
+        </StyledDiv>
+      </StyledLi>
+    );
 }

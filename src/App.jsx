@@ -90,6 +90,7 @@ function reducer(state, action) {
         id: Date.now(),
         title: "",
         text: "",
+        isArchived: false,
         checkboxArray: [],
       };
       return {
@@ -167,6 +168,18 @@ function reducer(state, action) {
                     ? { ...item, checked: !item.checked }
                     : item
                 ),
+              }
+            : note
+        ),
+      };
+    case "SEND_IN_ARCHIVE":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                isArchived: !note.isArchived
               }
             : note
         ),
@@ -364,6 +377,10 @@ function App() {
     }
   };
 
+  const handleSendInArchive = () => {
+    dispatch({type: "SEND_IN_ARCHIVE"})
+  };
+
   return (
     <>
       <StyledWrapper>
@@ -381,18 +398,29 @@ function App() {
             onNoteRemove={handleNoteRemove}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
+            onSendInArchive={handleSendInArchive}
             style={editorStyle}
           ></NoteEditor>
         )}
-<AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
+        <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
 
         <NoteList
           getItemStyle={listItemStyle}
           notes={state.listOfLists}
+          hideArchive={true}
           onNoteClick={handleNoteClick}
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
+        <h2>ARCHIVE</h2>
+        <NoteList
+          getItemStyle={listItemStyle}
+          notes={state.listOfLists}
+          // hideArchive={false}
+          hideNotArchive={true}
+          onNoteClick={handleNoteClick}
+          onEmojiSelect={handleEmojiSelect}
+        ></NoteList>
       </StyledWrapper>
     </>
   );
