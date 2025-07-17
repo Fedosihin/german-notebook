@@ -47,7 +47,7 @@ export default function NoteListItem({
   hideArchive = false,
   hideNotArchive = false,
 }) {
-  if (!('isArchived' in note)) {
+  if (!('isArchived' in note) && !hideNotArchive) {
     return(
       <StyledLi>
         <StyledEmojiButton
