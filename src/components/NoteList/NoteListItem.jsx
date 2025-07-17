@@ -47,22 +47,9 @@ export default function NoteListItem({
   hideArchive = false,
   hideNotArchive = false,
 }) {
-  if (!('isArchived' in note) && !hideNotArchive) {
-    return(
-      <StyledLi>
-        <StyledEmojiButton
-          onEmojiSelect={onEmojiSelect}
-          note={note}
-        ></StyledEmojiButton>
-        <StyledDiv onClick={onClick} style={style}>
-          <PlaceholderSpan placeholder={"Введите название..."}>
-            {note.title}
-          </PlaceholderSpan>
-        </StyledDiv>
-      </StyledLi>
-    );
-  }
 
+ 
+  
   if (hideArchive === true && note.isArchived === true) {
     return;
   } else if (hideNotArchive === true && note.isArchived === false) {
