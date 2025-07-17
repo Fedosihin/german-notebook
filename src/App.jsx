@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 // Ключ для localStorage
 const LOCAL_STORAGE_KEY = "notesAppData";
+const LOCAL_STORAGE_ARCHIVE_KEY = "notesArchiveAppData";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -39,18 +40,6 @@ const getInitialState = () => {
               id: 0,
               checked: true,
               text: "Первый список - пункт",
-            },
-          ],
-        },
-        {
-          id: 1,
-          title: "second list",
-          text: "second text",
-          checkboxArray: [
-            {
-              id: 0,
-              checked: true,
-              text: "Второй список - пункт",
             },
           ],
         },
@@ -194,6 +183,7 @@ function reducer(state, action) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [archiveState, archiveDispatch] = useReducer(reducer, initialState);
 
   // Загружаем данные из localStorage при инициализации
   useEffect(() => {
@@ -209,11 +199,25 @@ function App() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state.listOfLists));
   }, [state.listOfLists]);
 
+  useEffect(() => {
+    localStorage.setItem(
+      LOCAL_STORAGE_ARCHIVE_KEY,
+      JSON.stringify(archiveState.listOfLists)
+    );
+  }, [archiveState.listOfLists]);
+
   const activeNote = useMemo(
     () =>
       state.listOfLists.find((note) => note.id === state.activeNoteId) ||
       state.listOfLists[0],
     [state.listOfLists, state.activeNoteId]
+  );
+
+  const activeArchiveNote = useMemo(
+    () =>
+      archiveState.listOfLists.find((note) => note.id === archiveState.activeNoteId) ||
+      archiveState.listOfLists[0],
+    [archiveState.listOfLists, archiveState.activeNoteId]
   );
 
   const openEditor = () => {
@@ -384,7 +388,7 @@ function App() {
             style={editorStyle}
           ></NoteEditor>
         )}
-<AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
+        <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
 
         <NoteList
           getItemStyle={listItemStyle}
@@ -393,6 +397,30 @@ function App() {
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
+        <h2>Archive</h2>
+        {archiveState.isEditorOpen && (
+          <NoteEditor
+            note={activeArchiveNote}
+            onClose={closeEditor}
+            onTitleChange={handleTitleChange}
+            onCheckboxStatusChange={handleCheckboxStatusChange}
+            onCheckboxTextChange={handleCheckboxTextChange}
+            onTextChange={handleTextChange}
+            onAddCheckbox={addCheckbox}
+            onEmojiSelect={handleEmojiSelect}
+            onCheckboxRemove={handleCheckboxRemove}
+            onNoteRemove={handleNoteRemove}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            style={editorStyle}
+          ></NoteEditor>
+        )}
+        <NoteList
+          getItemStyle={listItemStyle}
+          notes={archiveState.listOfLists}
+          onNoteClick={handleNoteClick}
+          onEmojiSelect={handleEmojiSelect}
+        ></NoteList>
       </StyledWrapper>
     </>
   );
