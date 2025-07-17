@@ -60,6 +60,7 @@ const getInitialState = () => {
 const initialState = {
   listOfLists: getInitialState(),
   isEditorOpen: false,
+  isArchiveOpen: false,
   activeNoteId: 0,
 };
 
@@ -79,6 +80,16 @@ function reducer(state, action) {
       return {
         ...state,
         isEditorOpen: false,
+      };
+    case "OPEN_ARCHIVE":
+      return {
+        ...state,
+        isArchiveOpen: true,
+      };
+    case "CLOSE_ARCHIVE":
+      return {
+        ...state,
+        isArchiveOpen: false,
       };
     case "SET_ACTIVE_NOTE":
       return {
@@ -179,7 +190,7 @@ function reducer(state, action) {
           note.id === state.activeNoteId
             ? {
                 ...note,
-                isArchived: !note.isArchived
+                isArchived: !note.isArchived,
               }
             : note
         ),
@@ -378,7 +389,7 @@ function App() {
   };
 
   const handleSendInArchive = () => {
-    dispatch({type: "SEND_IN_ARCHIVE"})
+    dispatch({ type: "SEND_IN_ARCHIVE" });
   };
 
   return (
@@ -412,15 +423,26 @@ function App() {
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
 
-        <h2>ARCHIVE</h2>
-        <NoteList
-          getItemStyle={listItemStyle}
-          notes={state.listOfLists}
-          // hideArchive={false}
-          hideNotArchive={true}
-          onNoteClick={handleNoteClick}
-          onEmojiSelect={handleEmojiSelect}
-        ></NoteList>
+        <button
+          onClick={() => {
+            
+            if (state.isArchiveOpen) {
+              dispatch({ type: "CLOSE_ARCHIVE" });
+            } else {
+              dispatch({ type: "OPEN_ARCHIVE" });
+            }
+          }}
+        >ARCHIVE</button>
+        {state.isArchiveOpen && (
+          <NoteList
+            getItemStyle={listItemStyle}
+            notes={state.listOfLists}
+            // hideArchive={false}
+            hideNotArchive={true}
+            onNoteClick={handleNoteClick}
+            onEmojiSelect={handleEmojiSelect}
+          ></NoteList>
+        )}
       </StyledWrapper>
     </>
   );
