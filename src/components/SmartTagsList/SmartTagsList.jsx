@@ -9,20 +9,22 @@ export default function SmartTagsList({
     <ul>
       {/* ПЕРЕДЕЛАТЬ  ДЛЯ СТАРЫХ ЗАПИСЕЙ  */}
       {tags.map((tag) => {
-        if (note.tags) {
-          if (note.tags.includes(tag))
-            return (
-              <li onClick={() => onClick(tag)} key={tag}>
-                {tag}+
-              </li>
-            );
-          else
-            return (
-              <li onClick={() => onClick(tag)} key={tag}>
-                {tag}-
-              </li>
-            );
+        if (!("tags" in note)) {
+          note.tags = [];
         }
+
+        if (note.tags.includes(tag))
+          return (
+            <li onClick={() => onClick(tag)} key={tag}>
+              {tag}+
+            </li>
+          );
+        else
+          return (
+            <li onClick={() => onClick(tag)} key={tag}>
+              {tag}-
+            </li>
+          );
       })}
     </ul>
   );
