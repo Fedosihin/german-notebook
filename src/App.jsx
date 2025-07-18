@@ -500,6 +500,7 @@ function App() {
             notes={state.listOfLists}
             // hideArchive={false}
             hideNotArchive={true}
+            // hideNotSorted={false}
             onNoteClick={handleNoteClick}
             onEmojiSelect={handleEmojiSelect}
           ></NoteList>
