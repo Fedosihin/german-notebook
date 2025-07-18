@@ -270,6 +270,9 @@ function App() {
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state.listOfLists));
   }, [state.listOfLists]);
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_TAGS_KEY, JSON.stringify(state.tags));
+  }, [state.tags]);
 
   const activeNote = useMemo(
     () =>
