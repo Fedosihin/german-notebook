@@ -13,12 +13,14 @@ const StyledUl = styled.ul`
 
 export default function NoteList({
   notes,
+  globalTags,
   onNoteClick,
   getItemStyle,
   filter = [],
   onEmojiSelect,
   hideArchive = false,
   hideNotArchive = false,
+  hideNotSorted = true,
 }) {
   return (
     <StyledUl>
@@ -30,7 +32,11 @@ export default function NoteList({
         //   );
         //   console.log(hasCommonElement); // true (есть общий элемент 3)
         // }
-
+        // if (filter.length === 0 && hideNotSorted && note.tags && note.tags.length !== 0) {return}
+        // нужно проверить что у ноты нет ни одного тега из тэгов стейта
+        // и при этом массив тегов ноты не пустой
+        // есть хотя бы один тэг из списка тегов
+        if (filter.length === 0 && hideNotSorted && note.tags && globalTags && note.tags.length !== 0 && (note.tags.some(item => globalTags.includes(item)))) {return}
         if (filter.length == 0) {
           return (
             <NoteListItem

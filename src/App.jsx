@@ -478,6 +478,7 @@ function App() {
         filter={state.filterTags}
           getItemStyle={listItemStyle}
           notes={state.listOfLists}
+          globalTags={state.tags}
           hideArchive={true}
           onNoteClick={handleNoteClick}
           onEmojiSelect={handleEmojiSelect}
