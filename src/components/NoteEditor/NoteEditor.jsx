@@ -4,6 +4,7 @@ import EmojiButton from "../EmojiButton/EmojiButton";
 import styled from "styled-components";
 import RemoveNoteButton from "../RemoveNoteButton/RemoveNoteButton";
 import AutoTextarea from "../AutoTextarea/AutoTextarea";
+import SmartTagsList from "../SmartTagsList/SmartTagsList";
 
 const StyledContainer = styled.div`
   min-width: 500px;
@@ -91,7 +92,9 @@ const StyledAutoTextarea = styled(AutoTextarea)`
 
 export default function NoteEditor({
   note,
+  tags,
   onClose,
+  onTagClick,
   onTitleChange,
   onTextChange,
   onAddCheckbox,
@@ -108,6 +111,7 @@ export default function NoteEditor({
   return (
     <StyledContainer id="editor" className="modal" style={style}>
       <div className="modal-content">
+        <SmartTagsList tags={tags} note={note} onClick={onTagClick}></SmartTagsList>
         <StyledHeaderContainer>
           <EmojiButton note={note} onEmojiSelect={onEmojiSelect}></EmojiButton>
           <StyledHeaderInput

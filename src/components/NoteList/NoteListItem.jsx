@@ -47,6 +47,8 @@ export default function NoteListItem({
   hideArchive = false,
   hideNotArchive = false,
 }) {
+
+  // ТАК НЕЛЬЗЯ!!
    if (!('isArchived' in note)) {
     note.isArchived = false;
   }

@@ -4,9 +4,14 @@ import NoteList from "./components/NoteList/NoteList";
 import AddNoteButton from "./components/AddNoteButton/AddNoteButton";
 import NoteEditor from "./components/NoteEditor/NoteEditor";
 import styled from "styled-components";
+import AddTagButton from "./components/AddTagButton/AddTagButton";
+import TagsList from "./components/TagsList/TagsList";
+import SmartTagsList from "./components/SmartTagsList/SmartTagsList";
+import SmartTagsList2 from "./components/SmartTagsList/SmartTagsList2";
 
 // Ключ для localStorage
 const LOCAL_STORAGE_KEY = "notesAppData";
+const LOCAL_STORAGE_TAGS_KEY = "notesTagsAppData";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -42,23 +47,18 @@ const getInitialState = () => {
             },
           ],
         },
-        {
-          id: 1,
-          title: "second list",
-          text: "second text",
-          checkboxArray: [
-            {
-              id: 0,
-              checked: true,
-              text: "Второй список - пункт",
-            },
-          ],
-        },
       ];
+};
+
+const getInitialTagsState = () => {
+  const savedData = localStorage.getItem(LOCAL_STORAGE_TAGS_KEY);
+  return savedData ? JSON.parse(savedData) : [];
 };
 
 const initialState = {
   listOfLists: getInitialState(),
+  tags: getInitialTagsState(),
+  filterTags: [],
   isEditorOpen: false,
   isArchiveOpen: false,
   activeNoteId: 0,
@@ -101,6 +101,7 @@ function reducer(state, action) {
         id: Date.now(),
         title: "",
         text: "",
+        tags: [],
         isArchived: false,
         checkboxArray: [],
       };
@@ -108,6 +109,13 @@ function reducer(state, action) {
         ...state,
         listOfLists: [...state.listOfLists, newNote],
         activeNoteId: newNote.id,
+      };
+    }
+    case "ADD_TAG": {
+      const newTag = action.payload;
+      return {
+        ...state,
+        tags: [...state.tags, newTag],
       };
     }
     case "UPDATE_NOTE_PROPERTY":
@@ -183,6 +191,36 @@ function reducer(state, action) {
             : note
         ),
       };
+    case "TOGGLE_TAG_IN_NOTE": {
+      const newTag = action.payload;
+
+      // if (state.listOfLists[])
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === state.activeNoteId
+            ? {
+                ...note,
+                tags: note.tags.includes(newTag)
+                  ? note.tags.filter((tag) => tag !== newTag)
+                  : [...note.tags, newTag],
+              }
+            : note
+        ),
+      };
+    }
+    case "TOGGLE_TAG_IN_FILTER": {
+      const newTag = action.payload;
+
+      // if (state.listOfLists[])
+      return {
+        ...state,
+        filterTags: state.filterTags.includes(newTag)
+          ? state.filterTags.filter((tag) => tag !== newTag)
+          : [...state.filterTags, newTag],
+      };
+    }
+
     case "SEND_IN_ARCHIVE":
       return {
         ...state,
@@ -392,12 +430,30 @@ function App() {
     dispatch({ type: "SEND_IN_ARCHIVE" });
   };
 
+  const handleTagAdd = (newTag) => {
+    dispatch({ type: "ADD_TAG", payload: newTag });
+  };
+
+  const handleTagClick = (tag) => {
+    dispatch({ type: "TOGGLE_TAG_IN_NOTE", payload: tag });
+  };
+
+  const handleFilterClick = (newTag) => {
+    dispatch({ type: "TOGGLE_TAG_IN_FILTER", payload: newTag });
+  };
+
   return (
     <>
       <StyledWrapper>
+        <SmartTagsList2
+          tags={state.tags}
+          onClick={handleFilterClick}
+          filter={state.filterTags}
+        ></SmartTagsList2>{" "}
         {state.isEditorOpen && (
           <NoteEditor
             note={activeNote}
+            tags={state.tags}
             onClose={closeEditor}
             onTitleChange={handleTitleChange}
             onCheckboxStatusChange={handleCheckboxStatusChange}
@@ -410,29 +466,30 @@ function App() {
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onSendInArchive={handleSendInArchive}
+            onTagClick={handleTagClick}
             style={editorStyle}
           ></NoteEditor>
         )}
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
-
         <NoteList
+        filter={state.filterTags}
           getItemStyle={listItemStyle}
           notes={state.listOfLists}
           hideArchive={true}
           onNoteClick={handleNoteClick}
           onEmojiSelect={handleEmojiSelect}
         ></NoteList>
-
         <button
           onClick={() => {
-            
             if (state.isArchiveOpen) {
               dispatch({ type: "CLOSE_ARCHIVE" });
             } else {
               dispatch({ type: "OPEN_ARCHIVE" });
             }
           }}
-        >ARCHIVE</button>
+        >
+          ARCHIVE
+        </button>
         {state.isArchiveOpen && (
           <NoteList
             getItemStyle={listItemStyle}
@@ -443,6 +500,8 @@ function App() {
             onEmojiSelect={handleEmojiSelect}
           ></NoteList>
         )}
+        <TagsList tags={state.tags}></TagsList>
+        <AddTagButton onButtonClick={handleTagAdd}></AddTagButton>
       </StyledWrapper>
     </>
   );
