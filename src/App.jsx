@@ -29,6 +29,21 @@ const StyledWrapper = styled.div`
   }
 `;
 
+const StyledLogo = styled.p`
+  display: block;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-weight: 800;
+  font-size: 26px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    top: -10px;
+    left: 8px;
+  }
+`;
+
 const getInitialState = () => {
   const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
   return savedData
@@ -448,6 +463,7 @@ function App() {
   return (
     <>
       <StyledWrapper>
+        <StyledLogo>HERMAN NOTE</StyledLogo>
         <SmartTagsList2
           tags={state.tags}
           onClick={handleFilterClick}
@@ -475,7 +491,7 @@ function App() {
         )}
         <AddNoteButton onButtonClick={CreateEmptyNote}></AddNoteButton>
         <NoteList
-        filter={state.filterTags}
+          filter={state.filterTags}
           getItemStyle={listItemStyle}
           notes={state.listOfLists}
           globalTags={state.tags}
