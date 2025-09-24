@@ -13,7 +13,6 @@ import SmartTagsList2 from "./components/SmartTagsList/SmartTagsList2";
 const LOCAL_STORAGE_KEY = "notesAppData";
 const LOCAL_STORAGE_TAGS_KEY = "notesTagsAppData";
 
-
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -82,11 +81,17 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "LOAD_STATE":
+    case "LOAD_STATE": {
+      const loadedList = action.payload || initialState.listOfLists;
+      const updatedList = loadedList.map((note) => ({
+        ...note,
+        last_change: note.last_change || Date.now(), // добавляем дату, если нет
+      }));
       return {
         ...state,
-        listOfLists: action.payload || initialState.listOfLists,
+        listOfLists: updatedList,
       };
+    }
     case "OPEN_EDITOR":
       return {
         ...state,
@@ -115,6 +120,7 @@ function reducer(state, action) {
     case "CREATE_NOTE": {
       const newNote = {
         id: Date.now(),
+        last_change: Date.now(),
         title: "",
         text: "",
         tags: [],
@@ -370,8 +376,6 @@ function App() {
     });
   };
 
-  
-
   const handleBlur = (e) => {
     const trimmedValue = e.target.value.trim();
     // Проверяем, не пустая ли строка после обрезки пробелов
@@ -394,8 +398,6 @@ function App() {
     ).length;
     return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
   }, [activeNote]);
-
-
 
   // Создаем цвет на основе процента выполнения
   const getBackgroundStyle = useMemo(() => {
