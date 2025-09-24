@@ -13,6 +13,7 @@ import SmartTagsList2 from "./components/SmartTagsList/SmartTagsList2";
 const LOCAL_STORAGE_KEY = "notesAppData";
 const LOCAL_STORAGE_TAGS_KEY = "notesTagsAppData";
 
+
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -369,6 +370,8 @@ function App() {
     });
   };
 
+  
+
   const handleBlur = (e) => {
     const trimmedValue = e.target.value.trim();
     // Проверяем, не пустая ли строка после обрезки пробелов
@@ -391,6 +394,8 @@ function App() {
     ).length;
     return Math.round((doneCount / activeNote.checkboxArray.length) * 100);
   }, [activeNote]);
+
+
 
   // Создаем цвет на основе процента выполнения
   const getBackgroundStyle = useMemo(() => {
@@ -423,16 +428,6 @@ function App() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Предотвращаем перевод строки
-      // handleSubmit(); // Вызываем функцию
-      // dispatch({ type: "ADD_CHECKBOX" }).then(()=>{
-      //   const nextInput = document.querySelector("#checkboxesList > div:last-child");
-      //   console.log(nextInput);
-      //   nextInput.focus();
-      // });
-      // dispatch({ type: "ADD_CHECKBOX" });
-      // const nextInput = document.querySelector("#checkboxesList > div:last-child");
-      // console.log(nextInput);
-      // nextInput.focus();
       dispatch({ type: "ADD_CHECKBOX" });
       setTimeout(() => {
         const nextInput = document.querySelector(
