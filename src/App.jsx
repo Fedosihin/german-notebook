@@ -15,8 +15,8 @@ import NoteEditorBAD from "./components/NoteEditorBAD/NoteEditorBAD";
 const LOCAL_STORAGE_KEY = "notesAppData";
 const LOCAL_STORAGE_TAGS_KEY = "notesTagsAppData";
 // открыть эдитор для изменения испорченого спустя
-// раз в час
-const WASTE_CHECK_COOLDOWN_MS = 1000 * 60 * 60; 
+// раз в 15 минут
+const WASTE_CHECK_COOLDOWN_MS = 1000 * 60 * 15; 
 // испортилось если не открывал столько то
 // 2 дня
 const WASTED_MS = 1000 * 60 * 60 * 24 * 2; 
