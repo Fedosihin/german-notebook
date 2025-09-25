@@ -8,6 +8,7 @@ import AddTagButton from "./components/AddTagButton/AddTagButton";
 import TagsList from "./components/TagsList/TagsList";
 import SmartTagsList from "./components/SmartTagsList/SmartTagsList";
 import SmartTagsList2 from "./components/SmartTagsList/SmartTagsList2";
+import React, { useState } from "react";
 
 // Ключ для localStorage
 const LOCAL_STORAGE_KEY = "notesAppData";
@@ -77,6 +78,7 @@ const initialState = {
   isEditorOpen: false,
   isArchiveOpen: false,
   activeNoteId: 0,
+  wasteId: 0,
 };
 
 function reducer(state, action) {
@@ -116,6 +118,11 @@ function reducer(state, action) {
       return {
         ...state,
         activeNoteId: action.payload,
+      };
+    case "SET_RANDOM_WASTE_ID":
+      return {
+        ...state,
+        wasteId: action.payload,
       };
     case "CREATE_NOTE": {
       const newNote = {
@@ -278,6 +285,65 @@ function reducer(state, action) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // const endTime = note.last_change + 3 * 24 * 60 * 60 * 1000;
+      // const seconds = Math.floor((endTime - Date.now()) / 1000);
+      // Код, который выполняется каждые 10 секунд
+      const WasteObjects = state.listOfLists.filter((note) => {
+        const dateNow = Date.now();
+        const difMs = dateNow - note.last_change;
+        // console.log(difMs);
+        const MsInOneDay = 1000 * 60 * 60 * 24;
+        const diffMin = difMs / (MsInOneDay / 24 / 60);
+        const diffHours = difMs / (MsInOneDay / 24);
+        const diffDays = difMs / MsInOneDay;
+        // console.log(MsInOneDay);
+        // console.log(difMs / MsInOneDay);
+        if (diffMin > 120) {
+          // console.log("просрочен");
+          return 1;
+        } else {
+          // console.log("ne просрочен");
+          return 0;
+        } 
+      });
+
+      if (WasteObjects.length > 0) {
+
+        // const GoodObjects = state.listOfLists.filter(note => note.last_change < (258491 * 1000));
+        // console.log("WasteObjects");
+        // console.log(WasteObjects);
+      const wasteIds = WasteObjects.map(note => {
+        return note.id
+      })
+      // console.log(wasteId);
+      
+      const randomIndex = Math.floor(Math.random() * wasteIds.length);
+      const wasteNoteId = wasteIds[randomIndex];
+      // console.log(randomIndex);
+      // state.randomIndex = randomIndex;
+      // state = {...state, randomIndex: randomIndex};
+      // console.log("до");
+      // console.log(state);
+      dispatch({ type: "SET_RANDOM_WASTE_ID", payload: wasteNoteId });
+      // console.log("после");
+      // console.log(state);
+      // ТУТ ПРОБЛЕМЫ И 
+      // БАГ БАГ БАГ
+    } else {
+      dispatch({ type: "SET_RANDOM_WASTE_ID", payload: 0 });
+    }
+      // console.log("Функция сработала!");
+      // console.log(state);
+      setCounter((prevCounter) => prevCounter + 1);
+    }, 5 * 1000); // 10000 мс = 10 секунд
+
+    // Очистка интервала при размонтировании компонента
+    return () => clearInterval(interval);
+  }, []); // Пустой массив зависимостей = эффект выполняется только при монтировании
 
   // Загружаем данные из localStorage при инициализации
   useEffect(() => {
@@ -295,6 +361,9 @@ function App() {
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_TAGS_KEY, JSON.stringify(state.tags));
   }, [state.tags]);
+
+  
+
 
   const activeNote = useMemo(
     () =>
@@ -457,8 +526,26 @@ function App() {
     dispatch({ type: "TOGGLE_TAG_IN_FILTER", payload: newTag });
   };
 
+  //   useEffect(() => {
+  //   console.log(state);
+  // }, [state]);
+
+  useEffect(() => {
+    const wasteId = state.wasteId
+    if (wasteId != 0) {
+      console.log(wasteId);
+    }
+  }, [state.wasteId]);
+
   return (
     <>
+   {state.wasteId != 0 && <div>
+    ЕСТЬ МУСОР
+    </div>}
+      <div>
+        <p>Счетчик: {counter}</p>
+        <p>Функция срабатывает каждые 10 секунд</p>
+      </div>
       <StyledWrapper>
         <StyledLogo>HERMAN NOTE</StyledLogo>
         <SmartTagsList2
