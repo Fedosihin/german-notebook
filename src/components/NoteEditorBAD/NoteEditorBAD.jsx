@@ -91,7 +91,7 @@ const StyledAutoTextarea = styled(AutoTextarea)`
   }
 `;
 
-export default function NoteEditor({
+export default function NoteEditorBAD({
   note,
   tags,
   onClose,

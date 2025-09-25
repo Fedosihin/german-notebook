@@ -9,10 +9,17 @@ import TagsList from "./components/TagsList/TagsList";
 import SmartTagsList from "./components/SmartTagsList/SmartTagsList";
 import SmartTagsList2 from "./components/SmartTagsList/SmartTagsList2";
 import React, { useState } from "react";
+import NoteEditorBAD from "./components/NoteEditorBAD/NoteEditorBAD";
 
 // Ключ для localStorage
 const LOCAL_STORAGE_KEY = "notesAppData";
 const LOCAL_STORAGE_TAGS_KEY = "notesTagsAppData";
+// открыть эдитор для изменения испорченого спустя
+// раз в час
+const WASTE_CHECK_COOLDOWN_MS = 1000 * 60 * 60; 
+// испортилось если не открывал столько то
+// 2 дня
+const WASTED_MS = 1000 * 60 * 60 * 24 * 2; 
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -79,6 +86,7 @@ const initialState = {
   isArchiveOpen: false,
   activeNoteId: 0,
   wasteId: 0,
+  cooldown: Date.now(),
 };
 
 function reducer(state, action) {
@@ -94,6 +102,20 @@ function reducer(state, action) {
         listOfLists: updatedList,
       };
     }
+    case "UPDATE_LAST_CHANGE_DATE":
+      return {
+        ...state,
+        listOfLists: state.listOfLists.map((note) =>
+          note.id === action.payload
+            ? { ...note, last_change: Date.now() }
+            : note
+        ),
+      };
+    case "UPDATE_COOLDOWN":
+      return {
+        ...state,
+        cooldown: Date.now(),
+      };
     case "OPEN_EDITOR":
       return {
         ...state,
@@ -289,53 +311,66 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // const endTime = note.last_change + 3 * 24 * 60 * 60 * 1000;
-      // const seconds = Math.floor((endTime - Date.now()) / 1000);
-      // Код, который выполняется каждые 10 секунд
-      const WasteObjects = state.listOfLists.filter((note) => {
-        const dateNow = Date.now();
-        const difMs = dateNow - note.last_change;
-        // console.log(difMs);
-        const MsInOneDay = 1000 * 60 * 60 * 24;
-        const diffMin = difMs / (MsInOneDay / 24 / 60);
-        const diffHours = difMs / (MsInOneDay / 24);
-        const diffDays = difMs / MsInOneDay;
-        // console.log(MsInOneDay);
-        // console.log(difMs / MsInOneDay);
-        if (diffMin > 120) {
-          // console.log("просрочен");
-          return 1;
-        } else {
-          // console.log("ne просрочен");
-          return 0;
-        } 
-      });
-
-      if (WasteObjects.length > 0) {
-
-        // const GoodObjects = state.listOfLists.filter(note => note.last_change < (258491 * 1000));
-        // console.log("WasteObjects");
-        // console.log(WasteObjects);
-      const wasteIds = WasteObjects.map(note => {
-        return note.id
-      })
-      // console.log(wasteId);
+      const dateNow = Date.now();
+      if (!state.cooldown) {
+        dispatch({ type: "UPDATE_COOLDOWN" });
+      }
+      console.log(state.cooldown);
       
-      const randomIndex = Math.floor(Math.random() * wasteIds.length);
-      const wasteNoteId = wasteIds[randomIndex];
-      // console.log(randomIndex);
-      // state.randomIndex = randomIndex;
-      // state = {...state, randomIndex: randomIndex};
-      // console.log("до");
-      // console.log(state);
-      dispatch({ type: "SET_RANDOM_WASTE_ID", payload: wasteNoteId });
-      // console.log("после");
-      // console.log(state);
-      // ТУТ ПРОБЛЕМЫ И 
-      // БАГ БАГ БАГ
-    } else {
-      dispatch({ type: "SET_RANDOM_WASTE_ID", payload: 0 });
-    }
+      const diffMs = Date.now() - state.cooldown;
+      const diffS = diffMs / 1000;
+      const diffM = diffMs / 1000 / 60;
+      console.log(diffMs);
+      if (diffMs >  WASTE_CHECK_COOLDOWN_MS) {
+        // const endTime = note.last_change + 3 * 24 * 60 * 60 * 1000;
+        // const seconds = Math.floor((endTime - Date.now()) / 1000);
+        // Код, который выполняется каждые 10 секунд
+        const WasteObjects = state.listOfLists.filter((note) => {
+          const dateNow = Date.now();
+          const difMs = dateNow - note.last_change;
+          // console.log(difMs);
+          const MsInOneDay = 1000 * 60 * 60 * 24;
+          const diffMin = difMs / (MsInOneDay / 24 / 60);
+          const diffHours = difMs / (MsInOneDay / 24);
+          const diffDays = difMs / MsInOneDay;
+          // console.log(MsInOneDay);
+          // console.log(difMs / MsInOneDay);
+          if (difMs > WASTED_MS) {
+            // console.log("просрочен");
+            return 1;
+          } else {
+            // console.log("ne просрочен");
+            return 0;
+          }
+        });
+
+        if (WasteObjects.length > 0) {
+          // const GoodObjects = state.listOfLists.filter(note => note.last_change < (258491 * 1000));
+          // console.log("WasteObjects");
+          // console.log(WasteObjects);
+          const wasteIds = WasteObjects.map((note) => {
+            return note.id;
+          });
+          // console.log(wasteId);
+
+          const randomIndex = Math.floor(Math.random() * wasteIds.length);
+          const wasteNoteId = wasteIds[randomIndex];
+          // console.log(randomIndex);
+          // state.randomIndex = randomIndex;
+          // state = {...state, randomIndex: randomIndex};
+          // console.log("до");
+          // console.log(state);
+          dispatch({ type: "SET_RANDOM_WASTE_ID", payload: wasteNoteId });
+          
+          // console.log("после");
+          // console.log(state);
+          // ТУТ ПРОБЛЕМЫ И
+          // БАГ БАГ БАГ
+        } else {
+          dispatch({ type: "SET_RANDOM_WASTE_ID", payload: 0 });
+        }
+        dispatch({ type: "UPDATE_COOLDOWN" });
+      }
       // console.log("Функция сработала!");
       // console.log(state);
       setCounter((prevCounter) => prevCounter + 1);
@@ -362,9 +397,6 @@ function App() {
     localStorage.setItem(LOCAL_STORAGE_TAGS_KEY, JSON.stringify(state.tags));
   }, [state.tags]);
 
-  
-
-
   const activeNote = useMemo(
     () =>
       state.listOfLists.find((note) => note.id === state.activeNoteId) ||
@@ -385,6 +417,7 @@ function App() {
   const handleNoteClick = (id) => {
     console.log("Был нажат элемент списка:");
     dispatch({ type: "SET_ACTIVE_NOTE", payload: id });
+    dispatch({ type: "UPDATE_LAST_CHANGE_DATE", payload: id });
     openEditor();
   };
 
@@ -531,17 +564,36 @@ function App() {
   // }, [state]);
 
   useEffect(() => {
-    const wasteId = state.wasteId
+    const wasteId = state.wasteId;
     if (wasteId != 0) {
       console.log(wasteId);
+      dispatch({ type: "SET_ACTIVE_NOTE", payload: wasteId });
+      dispatch({ type: "OPEN_EDITOR" });
+      dispatch({ type: "UPDATE_LAST_CHANGE_DATE", payload: wasteId });
     }
   }, [state.wasteId]);
 
   return (
     <>
-   {state.wasteId != 0 && <div>
+      {/* {state.wasteId != 0 && <div>
     ЕСТЬ МУСОР
-    </div>}
+    <NoteEditorBAD   note={activeNote}
+            tags={state.tags}
+            onClose={closeEditor}
+            onTitleChange={handleTitleChange}
+            onCheckboxStatusChange={handleCheckboxStatusChange}
+            onCheckboxTextChange={handleCheckboxTextChange}
+            onTextChange={handleTextChange}
+            onAddCheckbox={addCheckbox}
+            onEmojiSelect={handleEmojiSelect}
+            onCheckboxRemove={handleCheckboxRemove}
+            onNoteRemove={handleNoteRemove}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            onSendInArchive={handleSendInArchive}
+            onTagClick={handleTagClick}
+            style={editorStyle}></NoteEditorBAD>
+    </div>} */}
       <div>
         <p>Счетчик: {counter}</p>
         <p>Функция срабатывает каждые 10 секунд</p>
