@@ -5,6 +5,7 @@ import styled from "styled-components";
 import RemoveNoteButton from "../RemoveNoteButton/RemoveNoteButton";
 import AutoTextarea from "../AutoTextarea/AutoTextarea";
 import SmartTagsList from "../SmartTagsList/SmartTagsList";
+import { useState, useEffect } from "react";
 
 const StyledContainer = styled.div`
   min-width: 500px;
@@ -108,10 +109,28 @@ export default function NoteEditor({
   onKeyDown,
   onSendInArchive,
 }) {
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  useEffect(() => {
+    // if (!refuelTime) return;
+
+    const interval = setInterval(() => {
+      const endTime = note.last_change + 3 * 24 * 60 * 60 * 1000;
+      const seconds = Math.floor((endTime - Date.now()) / 1000);
+      setSecondsLeft(Math.max(0, seconds));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [note.last_change]);
+
   return (
     <StyledContainer id="editor" className="modal" style={style}>
       <div className="modal-content">
-        <SmartTagsList tags={tags} note={note} onClick={onTagClick}></SmartTagsList>
+        <SmartTagsList
+          tags={tags}
+          note={note}
+          onClick={onTagClick}
+        ></SmartTagsList>
+        <div>Осталось: {secondsLeft} секунд</div>
         <StyledHeaderContainer>
           <EmojiButton note={note} onEmojiSelect={onEmojiSelect}></EmojiButton>
           <StyledHeaderInput
