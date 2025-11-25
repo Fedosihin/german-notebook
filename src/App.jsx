@@ -16,10 +16,10 @@ const LOCAL_STORAGE_KEY = "notesAppData";
 const LOCAL_STORAGE_TAGS_KEY = "notesTagsAppData";
 // открыть эдитор для изменения испорченого спустя
 // раз в 15 минут
-const WASTE_CHECK_COOLDOWN_MS = 1000 * 60 * 15; 
+const WASTE_CHECK_COOLDOWN_MS = 1000 * 60 * 15;
 // испортилось если не открывал столько то
 // 2 дня
-const WASTED_MS = 1000 * 60 * 60 * 24 * 2; 
+const WASTED_MS = 1000 * 60 * 60 * 24 * 2;
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -316,12 +316,12 @@ function App() {
         dispatch({ type: "UPDATE_COOLDOWN" });
       }
       console.log(state.cooldown);
-      
+
       const diffMs = Date.now() - state.cooldown;
       const diffS = diffMs / 1000;
       const diffM = diffMs / 1000 / 60;
       console.log(diffMs);
-      if (diffMs >  WASTE_CHECK_COOLDOWN_MS) {
+      if (diffMs > WASTE_CHECK_COOLDOWN_MS) {
         // const endTime = note.last_change + 3 * 24 * 60 * 60 * 1000;
         // const seconds = Math.floor((endTime - Date.now()) / 1000);
         // Код, который выполняется каждые 10 секунд
@@ -361,7 +361,7 @@ function App() {
           // console.log("до");
           // console.log(state);
           dispatch({ type: "SET_RANDOM_WASTE_ID", payload: wasteNoteId });
-          
+
           // console.log("после");
           // console.log(state);
           // ТУТ ПРОБЛЕМЫ И
@@ -570,6 +570,7 @@ function App() {
       dispatch({ type: "SET_ACTIVE_NOTE", payload: wasteId });
       dispatch({ type: "OPEN_EDITOR" });
       dispatch({ type: "UPDATE_LAST_CHANGE_DATE", payload: wasteId });
+      dispatch({ type: "SET_RANDOM_WASTE_ID", payload: 0 });
     }
   }, [state.wasteId]);
 
