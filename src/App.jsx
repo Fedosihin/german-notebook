@@ -23,6 +23,7 @@ const StyledWrapper = styled.div`
     background-color: #636363;
   }
 `;
+// test commit
 
 const getInitialState = () => {
   const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
